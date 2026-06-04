@@ -160,6 +160,20 @@ textarea{resize:vertical;min-height:80px}
 .photo-placeholder img{width:100%;height:100%;object-fit:cover}
 .photo-placeholder .camera-icon{opacity:0.5}
 
+/* Image upload areas */
+.img-upload-area{background:var(--perodua-grey);border:2px dashed var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all var(--transition);margin-bottom:12px;position:relative}
+.img-upload-area:hover{border-color:var(--perodua-red);background:rgba(237,28,36,0.03)}
+.img-upload-area.has-image{border-style:solid;border-color:var(--wa-green);padding:12px}
+.img-upload-area input[type=file]{position:absolute;opacity:0;width:100%;height:100%;top:0;left:0;cursor:pointer}
+.img-upload-area .upload-icon{font-size:2rem;margin-bottom:8px}
+.img-upload-area .upload-text{font-size:0.85rem;color:var(--text-muted)}
+.img-upload-preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.img-upload-preview .preview-item{width:72px;height:72px;border-radius:var(--radius-sm);overflow:hidden;position:relative;border:1px solid var(--border);flex-shrink:0}
+.img-upload-preview .preview-item img{width:100%;height:100%;object-fit:cover}
+.img-upload-preview .preview-item .remove-img{position:absolute;top:-4px;right:-4px;width:20px;height:20px;border-radius:50%;background:var(--perodua-red);color:#fff;border:none;font-size:0.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2}
+.img-upload-preview .preview-item .remove-img:hover{transform:scale(1.1)}
+.file-info{font-size:0.75rem;color:var(--text-muted);margin-top:4px}
+
 /* Responsive */
 @media(max-width:480px){
   .header h1{font-size:0.95rem}
@@ -227,11 +241,14 @@ textarea{resize:vertical;min-height:80px}
 
       <div class="form-group">
         <label>Foto Profil</label>
-        <div class="photo-placeholder" id="photoPreview">
-          <span class="camera-icon">📷</span>
+        <div class="img-upload-area" id="profileUploadArea">
+          <input type="file" id="profileUpload" accept="image/*" capture="environment">
+          <div class="upload-icon">📷</div>
+          <div class="upload-text">Klik untuk muat naik gambar profil</div>
         </div>
-        <input type="text" id="photoUrl" placeholder="URL gambar profil (contoh: https://example.com/foto.jpg)" class="form-input" data-save="photoUrl">
-        <div class="hint">Masukkan URL gambar atau biarkan kosong untuk menggunakan placeholder.</div>
+        <div id="profilePreview" class="img-upload-preview"></div>
+        <div class="file-info" id="profileFileCount"></div>
+        <div class="hint">Ambil gambar atau pilih dari galeri. Gambar akan disimpan dalam prompt.</div>
       </div>
 
       <div class="form-group">
@@ -379,12 +396,54 @@ textarea{resize:vertical;min-height:80px}
     </div>
   </div>
 
-  <!-- STEP 6: Galeri -->
+  <!-- STEP 6: Galeri & Gambar -->
   <div class="step" data-step="6">
     <div class="card">
       <span class="step-number">Langkah 6</span>
-      <h2 class="card-title">Galeri</h2>
-      <p class="card-subtitle">Pilih jenis gambar dan kandungan yang ingin dipaparkan di galeri laman web anda.</p>
+      <h2 class="card-title">Galeri & Gambar</h2>
+      <p class="card-subtitle">Muat naik gambar dan pilih jenis kandungan untuk galeri laman web anda.</p>
+
+      <!-- Profile pic (re-upload option here too) -->
+      <div style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+        <h4 style="font-size:0.95rem;font-weight:700;margin-bottom:8px">👤 Gambar Profil</h4>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:8px">Gambar profil sudah dimuat naik di Langkah 1. Boleh ganti di sini jika perlu.</p>
+        <div id="profilePreviewStep6" class="img-upload-preview"></div>
+        <div class="file-info" id="profileFileCount6"></div>
+        <div class="img-upload-area">
+          <input type="file" id="profileUploadStep6" accept="image/*" capture="environment">
+          <div class="upload-icon">📷</div>
+          <div class="upload-text">Klik untuk tukar gambar profil</div>
+        </div>
+      </div>
+
+      <!-- WhatsApp Screenshots -->
+      <div style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+        <h4 style="font-size:0.95rem;font-weight:700;margin-bottom:4px">💬 Screenshot WhatsApp Testimoni</h4>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:10px">Muat naik screenshot perbualan WhatsApp dengan pelanggan yang puas hati. Gambar akan dipaparkan di galeri laman web.</p>
+        <div id="waPreview" class="img-upload-preview"></div>
+        <div class="img-upload-area" id="waUploadArea">
+          <input type="file" id="waUpload" accept="image/*" multiple capture="environment">
+          <div class="upload-icon">💬</div>
+          <div class="upload-text">Klik untuk muat naik <strong>screenshot WhatsApp</strong> pelanggan</div>
+        </div>
+        <div class="file-info" id="waFileCount">Tiada screenshot lagi.</div>
+      </div>
+
+      <!-- Delivery Photos -->
+      <div style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+        <h4 style="font-size:0.95rem;font-weight:700;margin-bottom:4px">🚗 Gambar Serahan Kereta</h4>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:10px">Gambar semasa serahan kereta kepada pelanggan. Tunjukkan momen pelanggan terima kereta baru mereka.</p>
+        <div id="deliveryPreview" class="img-upload-preview"></div>
+        <div class="img-upload-area" id="deliveryUploadArea">
+          <input type="file" id="deliveryUpload" accept="image/*" multiple capture="environment">
+          <div class="upload-icon">🚗</div>
+          <div class="upload-text">Klik untuk muat naik <strong>gambar serahan kereta</strong></div>
+        </div>
+        <div class="file-info" id="deliveryFileCount">Tiada gambar serahan lagi.</div>
+      </div>
+
+      <h4 style="font-size:0.95rem;font-weight:700;margin-bottom:8px">🖼️ Jenis Gambar Galeri</h4>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:10px">Pilih jenis gambar yang anda mahu paparkan di galeri (untuk gambar yang tak sempat muat naik).</p>
 
       <div class="gallery-suggest" id="galleryGrid">
         <div class="gallery-item" data-gallery="car-front">
@@ -550,6 +609,7 @@ textarea{resize:vertical;min-height:80px}
         <div class="deploy-content">
           <h4>Dapatkan Prompt dan Hasilkan Laman</h4>
           <p>Salin prompt yang dijana di Langkah 8 dan tampalkannya ke Claude (claude.ai). Claude akan menghasilkan satu fail <code>index.html</code> lengkap untuk laman web anda.</p>
+          <p style="font-size:0.82rem;color:#555;margin-top:4px">💡 <strong>Nota Gambar:</strong> Gambar profil, screenshot WhatsApp, dan gambar serahan yang dimuat naik akan disertakan terus dalam fail HTML (base64). Gambar model akan dipaut terus dari laman rasmi Perodua.</p>
         </div>
       </div>
 
@@ -643,51 +703,51 @@ const TOTAL_STEPS = 9;
 
 // ===== MODEL DATA =====
 const MODELS = [
-  {name:'Axia',type:'Compact Hatchback',from:'RM22,000',img:'axia-2023.png',variants:[
-    {name:'1.0L AV (D-CVT)',price:49500,rebat:0},
-    {name:'1.0L SE (D-CVT)',price:44000,rebat:0},
-    {name:'1.0L X (D-CVT)',price:40000,rebat:0},
-    {name:'1.0L G (D-CVT)',price:38600,rebat:0},
-    {name:'1.0L E (Manual)',price:22000,rebat:0}
+  {name:'Axia',type:'Compact Hatchback',from:'RM22,000',img:'https://www.perodua.com.my/assets/images/header_menu/perodua-axia.webp',variants:[
+  {name:'1.0L AV (D-CVT)',price:49500,rebat:0},
+  {name:'1.0L SE (D-CVT)',price:44000,rebat:0},
+  {name:'1.0L X (D-CVT)',price:40000,rebat:0},
+  {name:'1.0L G (D-CVT)',price:38600,rebat:0},
+  {name:'1.0L E (Manual)',price:22000,rebat:0}
   ]},
-  {name:'Bezza',type:'Compact Sedan',from:'RM34,580',img:'bezza-2023.png',variants:[
-    {name:'1.3 AV (Automatic)',price:49980,rebat:0},
-    {name:'1.3 X (Automatic)',price:43980,rebat:0},
-    {name:'1.0 G (Automatic)',price:36580,rebat:0},
-    {name:'1.0 G (Manual)',price:34580,rebat:0}
+  {name:'Bezza',type:'Compact Sedan',from:'RM34,580',img:'https://www.perodua.com.my/assets/images/header_menu/perodua-bezza.webp',variants:[
+  {name:'1.3 AV (Automatic)',price:49980,rebat:0},
+  {name:'1.3 X (Automatic)',price:43980,rebat:0},
+  {name:'1.0 G (Automatic)',price:36580,rebat:0},
+  {name:'1.0 G (Manual)',price:34580,rebat:0}
   ]},
-  {name:'Myvi',type:'Hatchback',from:'RM46,500',img:'myvi-2023.png',variants:[
-    {name:'1.5L AV (D-CVT)',price:59900,rebat:0},
-    {name:'1.5L H (D-CVT)',price:54900,rebat:0},
-    {name:'1.5L X (D-CVT)',price:50900,rebat:0},
-    {name:'1.3L G (D-CVT)',price:48500,rebat:0},
-    {name:'1.3L G (Without PSDA) (D-CVT)',price:46500,rebat:0}
+  {name:'Myvi',type:'Hatchback',from:'RM46,500',img:'https://www.perodua.com.my/assets/images/header_menu/perodua-myvi.webp',variants:[
+  {name:'1.5L AV (D-CVT)',price:59900,rebat:0},
+  {name:'1.5L H (D-CVT)',price:54900,rebat:0},
+  {name:'1.5L X (D-CVT)',price:50900,rebat:0},
+  {name:'1.3L G (D-CVT)',price:48500,rebat:0},
+  {name:'1.3L G (Without PSDA) (D-CVT)',price:46500,rebat:0}
   ]},
-  {name:'Ativa',type:'SUV',from:'RM62,500',img:'ativa-2023.png',variants:[
-    {name:'1.0L TURBO AV (2-Tone Special Metallic Black Roof)',price:73400,rebat:0},
-    {name:'1.0L TURBO AV (Special Metallic)',price:73100,rebat:0},
-    {name:'1.0L TURBO AV (Metallic)',price:72600,rebat:0},
-    {name:'1.0L TURBO H (Special Metallic)',price:67800,rebat:0},
-    {name:'1.0L TURBO H (Metallic)',price:67300,rebat:0},
-    {name:'1.0L TURBO X (Metallic)',price:62500,rebat:0}
+  {name:'Ativa',type:'SUV',from:'RM62,500',img:'https://www.perodua.com.my/assets/images/header_menu/perodua-ativa.webp',variants:[
+  {name:'1.0L TURBO AV (2-Tone Special Metallic Black Roof)',price:73400,rebat:0},
+  {name:'1.0L TURBO AV (Special Metallic)',price:73100,rebat:0},
+  {name:'1.0L TURBO AV (Metallic)',price:72600,rebat:0},
+  {name:'1.0L TURBO H (Special Metallic)',price:67800,rebat:0},
+  {name:'1.0L TURBO H (Metallic)',price:67300,rebat:0},
+  {name:'1.0L TURBO X (Metallic)',price:62500,rebat:0}
   ]},
-  {name:'Alza',type:'MPV 7-Seater',from:'RM62,500',img:'alza-2023.png',variants:[
-    {name:'1.5L AV (D-CVT)',price:75500,rebat:0},
-    {name:'1.5L H (D-CVT)',price:68000,rebat:0},
-    {name:'1.5L X (D-CVT)',price:62500,rebat:0}
+  {name:'Alza',type:'MPV 7-Seater',from:'RM62,500',img:'https://www.perodua.com.my/assets/images/header_menu/perodua-alza.webp',variants:[
+  {name:'1.5L AV (D-CVT)',price:75500,rebat:0},
+  {name:'1.5L H (D-CVT)',price:68000,rebat:0},
+  {name:'1.5L X (D-CVT)',price:62500,rebat:0}
   ]},
-  {name:'Aruz',type:'SUV 7-Seater',from:'RM72,900',img:'aruz-2023.png',variants:[
-    {name:'1.5 AV (Automatic)',price:77900,rebat:0},
-    {name:'1.5 X (Automatic)',price:72900,rebat:0}
+  {name:'Aruz',type:'SUV 7-Seater',from:'RM72,900',img:'https://www.perodua.com.my/assets/images/header_menu/perodua-aruz.webp',variants:[
+  {name:'1.5 AV (Automatic)',price:77900,rebat:0},
+  {name:'1.5 X (Automatic)',price:72900,rebat:0}
   ]},
-  {name:'Traz',type:'SUV 5-Seater',from:'~RM68,000',img:'traz-2023.png',variants:[
-    {name:'1.5L AV',price:78000,rebat:0},
-    {name:'1.5L X',price:72000,rebat:0}
+  {name:'Traz',type:'SUV 5-Seater',from:'~RM68,000',img:'https://www.perodua.com.my/assets/images/header_menu/traz_navigation_menu_red_2x.webp',variants:[
+  {name:'1.5L AV',price:78000,rebat:0},
+  {name:'1.5L X',price:72000,rebat:0}
   ]}
 ];
 
 // ===== STATE =====
-let state = {step:1,testimonials:[],gallerySelected:[]};
+let state = {step:1,testimonials:[],gallerySelected:[],profileImg:'',waImgs:[],deliveryImgs:[]};
 let saveTimer = null;
 let initialized = false;
 
@@ -699,12 +759,20 @@ function init(){
   renderTestimonials();
   renderGallery();
   updateNav();
-  updatePhoto();
   populateFromStep1();
   setupAutoSave();
   setupCheckItems();
   setupGalleryItems();
   setupLoanCalc();
+  setupImageUploads();
+  // Render saved images
+  renderImagePreview('profileImg','profilePreview',true);
+  renderImagePreview('profileImg','profilePreviewStep6',true);
+  renderImagePreview('waImgs','waPreview',false);
+  renderImagePreview('deliveryImgs','deliveryPreview',false);
+  updateFileCount('profileImg');
+  updateFileCount('waImgs');
+  updateFileCount('deliveryImgs');
   initialized = true;
   showStep(state.step);
 }
@@ -748,8 +816,17 @@ function saveState(){
     // Save rebat data
     state.rebats = MODELS.map(m=>({name:m.name,variants:m.variants.map(v=>({name:v.name,rebat:v.rebat||0,rebatLabel:v.rebatLabel||''}))}));
     state.promptLang = promptLang;
+    // Save images (base64) - compress if too large
     localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
-  }catch(e){console.warn('Save state error:',e)}
+  }catch(e){
+    console.warn('Save state error:',e);
+    // If localStorage full, remove image data and retry
+    if(e.name==='QuotaExceededError'||e.code===22){
+      state.profileImg=''; state.waImgs=[]; state.deliveryImgs=[];
+      try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e2){}
+      showToast('⚠️ Gambar terlalu besar. Gambar disimpan dalam sesi sahaja.');
+    }
+  }
 }
 
 function debouncedSave(){
@@ -828,7 +905,7 @@ function updateNav(){
 function restart(){
   if(!confirm('Mulakan semula? Semua data akan dipadamkan.')) return;
   localStorage.removeItem(STORAGE_KEY);
-  state = {step:1,testimonials:[],gallerySelected:[]};
+  state = {step:1,testimonials:[],gallerySelected:[],profileImg:'',waImgs:[],deliveryImgs:[]};
   document.querySelectorAll('[data-save]').forEach(el=>{
     if(el.type==='checkbox') el.checked = false;
     else el.value = '';
@@ -840,22 +917,160 @@ function restart(){
   showStep(1);
   renderModels();
   renderTestimonials();
-  updatePhoto();
+  setupAutoSave();
   populateFromStep1();
   showToast('✅ Data telah diset semula.');
 }
 
-// ===== PHOTO =====
-function updatePhoto(){
-  const url = document.getElementById('photoUrl').value.trim();
-  const preview = document.getElementById('photoPreview');
-  if(url){
-    preview.innerHTML = `<img src="${url}" alt="Foto Profil" onerror="this.parentElement.innerHTML='<span class=\\'camera-icon\\'>📷</span>'">`;
-  } else {
-    preview.innerHTML = '<span class="camera-icon">📷</span>';
-  }
+// ===== IMAGE UPLOAD HANDLERS =====
+const IMG_MAX_SIZE = 5 * 1024 * 1024; // 5MB per image
+const MAX_WA_IMGS = 8;
+const MAX_DELIVERY_IMGS = 8;
+
+function handleFileInput(inputId, stateKey, previewId, maxCount, isSingle) {
+  const input = document.getElementById(inputId);
+  input.addEventListener('change', function(e) {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    
+    const existing = isSingle ? (state[stateKey] ? [state[stateKey]] : []) : [...(state[stateKey] || [])];
+    let added = 0;
+    
+    files.forEach(file => {
+      if (file.size > IMG_MAX_SIZE) {
+        showToast(`⚠️ ${file.name} terlalu besar. Maks 5MB.`);
+        return;
+      }
+      if (!file.type.startsWith('image/')) {
+        showToast(`⚠️ ${file.name} bukan gambar.`);
+        return;
+      }
+      if (!isSingle && existing.length >= maxCount) {
+        showToast(`⚠️ Maksimum ${maxCount} gambar sahaja.`);
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const dataUrl = ev.target.result;
+        if (isSingle) {
+          state[stateKey] = dataUrl;
+        } else {
+          if (existing.length < maxCount) existing.push(dataUrl);
+          state[stateKey] = [...existing];
+        }
+        renderImagePreview(stateKey, previewId, isSingle);
+        updateFileCount(stateKey);
+        saveState();
+        showToast(`✅ ${file.name} dimuat naik`);
+      };
+      reader.readAsDataURL(file);
+      added++;
+    });
+    
+    // Reset input so same file can be re-selected
+    input.value = '';
+  });
 }
-document.getElementById('photoUrl')?.addEventListener('input',()=>{updatePhoto();debouncedSave()});
+
+function renderImagePreview(stateKey, previewId, isSingle) {
+  const container = document.getElementById(previewId);
+  if (!container) return;
+  const items = isSingle ? (state[stateKey] ? [state[stateKey]] : []) : (state[stateKey] || []);
+  
+  container.innerHTML = '';
+  if (!items.length) {
+    container.innerHTML = '';
+    return;
+  }
+  
+  items.forEach((dataUrl, i) => {
+    const div = document.createElement('div');
+    div.className = 'preview-item';
+    div.innerHTML = `<img src="${dataUrl}" alt="Uploaded image">`;
+    if (!isSingle || items.length === 1) {
+      const btn = document.createElement('button');
+      btn.className = 'remove-img';
+      btn.textContent = '✕';
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        if (isSingle) {
+          state[stateKey] = '';
+        } else {
+          state[stateKey] = state[stateKey].filter((_, idx) => idx !== i);
+        }
+        renderImagePreview(stateKey, previewId, isSingle);
+        updateFileCount(stateKey);
+        saveState();
+      };
+      div.appendChild(btn);
+    }
+    container.appendChild(div);
+  });
+}
+
+function updateFileCount(stateKey) {
+  const ids = {profileImg:'profileFileCount', waImgs:'waFileCount', deliveryImgs:'deliveryFileCount'};
+  const labels = {profileImg:'profil', waImgs:'screenshot WhatsApp', deliveryImgs:'gambar serahan'};
+  // Update both profile counters
+  if (stateKey === 'profileImg') {
+    const count = state.profileImg ? 1 : 0;
+    ['profileFileCount','profileFileCount6'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = count > 0 ? `✅ ${count} profil dimuat naik.` : 'Tiada profil lagi.';
+    });
+    return;
+  }
+  const el = document.getElementById(ids[stateKey]);
+  if (!el) return;
+  const count = state[stateKey]?.length || 0;
+  el.textContent = count > 0 
+    ? `✅ ${count} ${labels[stateKey]} dimuat naik.` 
+    : `Tiada ${labels[stateKey]} lagi.`;
+}
+
+function removeImage(stateKey, idx, previewId, isSingle) {
+  if (isSingle) {
+    state[stateKey] = '';
+  } else {
+    state[stateKey] = state[stateKey].filter((_, i) => i !== idx);
+  }
+  renderImagePreview(stateKey, previewId, isSingle);
+  updateFileCount(stateKey);
+  saveState();
+}
+
+function setupImageUploads() {
+  // Profile pic from Step 1
+  handleFileInput('profileUpload', 'profileImg', 'profilePreview', 1, true);
+  // Profile pic from Step 6
+  const s6 = document.getElementById('profileUploadStep6');
+  if (s6) {
+    s6.addEventListener('change', function(e) {
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
+      const file = files[0];
+      if (file.size > IMG_MAX_SIZE) { showToast('⚠️ Gambar terlalu besar. Maks 5MB.'); return; }
+      if (!file.type.startsWith('image/')) { showToast('⚠️ Bukan gambar.'); return; }
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        state.profileImg = ev.target.result;
+        renderImagePreview('profileImg', 'profilePreview', true);
+        renderImagePreview('profileImg', 'profilePreviewStep6', true);
+        updateFileCount('profileImg');
+        saveState();
+        showToast('✅ Gambar profil dikemas kini');
+      };
+      reader.readAsDataURL(file);
+      s6.value = '';
+    });
+  }
+  
+  // WhatsApp screenshots
+  handleFileInput('waUpload', 'waImgs', 'waPreview', MAX_WA_IMGS, false);
+  // Delivery photos
+  handleFileInput('deliveryUpload', 'deliveryImgs', 'deliveryPreview', MAX_DELIVERY_IMGS, false);
+}
 
 // ===== STEP 1 PREFILL =====
 function populateFromStep1(){
@@ -961,6 +1176,7 @@ function renderModels(){
     const header = document.createElement('div');
     header.className = 'model-header';
     header.innerHTML = `
+      <img src="${m.img}" alt="${m.name}" style="width:48px;height:48px;object-fit:contain;border-radius:6px;flex-shrink:0" onerror="this.style.display='none'">
       <h3>${m.name}</h3>
       <span class="model-badge">${m.type}</span>
       <span class="model-price-from">Dari ${m.from}</span>
@@ -1147,7 +1363,7 @@ function generatePrompt(){
   const phone = document.getElementById('phone').value||'[No Telefon]';
   const dealership = document.getElementById('dealership').value||'[Dealership]';
   const loc = document.getElementById('location').value||'[Lokasi]';
-  const photoUrl = document.getElementById('photoUrl').value||'';
+  const profileImgData = state.profileImg || '';
   const exp = document.getElementById('experience').value||'[Pengalaman]';
   const achievements = document.getElementById('achievements').value||'';
   const philosophy = document.getElementById('philosophy').value||'';
@@ -1240,7 +1456,9 @@ ${achievements ? `- Pencapaian: ${achievements}` : ''}
 ${philosophy ? `- Falsafah: ${philosophy}` : ''}
 ${showroom ? `- Alamat Showroom: ${showroom}` : ''}
 ${email ? `- E-mel: ${email}` : ''}
-${photoUrl ? `- URL Foto Profil: ${photoUrl} (guna untuk hero section dan about section)` : '- Foto Profil: Jika tiada, design tanpa gambar profil. Guna icon/avatar placeholder.'}
+${profileImgData ? `- Foto Profil (BASE64): ${profileImgData}` : '- Foto Profil: Tiada gambar profil dimuat naik. Guna icon/avatar placeholder.'}
+${state.waImgs && state.waImgs.length ? '\n\nSCREENSHOT WHATSAPP TESTIMONI ('+state.waImgs.length+' gambar) — Guna gambar-gambar ini di galeri laman web sebagai bukti kepuasan pelanggan.\n'+state.waImgs.map((d,i)=>'Gambar WhatsApp '+(i+1)+': '+d).join('\n') : ''}
+${state.deliveryImgs && state.deliveryImgs.length ? '\n\nGAMBAR SERAHAN KERETA ('+state.deliveryImgs.length+' gambar) — Guna gambar-gambar ini di galeri laman web. Tunjukkan momen pelanggan terima kereta baru.\n'+state.deliveryImgs.map((d,i)=>'Gambar Serahan '+(i+1)+': '+d).join('\n') : ''}
 
 ## PERKHIDMATAN
 ${servicesStr}
@@ -1274,12 +1492,14 @@ ${antiAI}
 - Icon emoji setiap satu
 - Butang WhatsApp untuk tanya lebih lanjut
 
-### 4. MODEL PERODUA — dengan HARGA, REBAT & LOAN CALCULATOR
+|### 4. MODEL PERODUA — dengan HARGA, REBAT & LOAN CALCULATOR
 Ini section PALING PENTING. Kena ada:
 
 a) Catalog model dengan badge jenis (Compact Hatchback, SUV dll)
-b) Setiap varian tunjuk harga + rebat badge (pill shape kuning) jika ada
-c) **Kalkulator Pinjaman (LOAN CALCULATOR)** — interactive, kira monthly payment guna flat rate Malaysia:
+b) Setiap model tunjuk gambar (GUNA URL INI untuk gambar model):
+${MODELS.map(m=>`  - ${m.name}: ${m.img}`).join('\n')}
+c) Setiap varian tunjuk harga + rebat badge (pill shape kuning) jika ada
+d) **Kalkulator Pinjaman (LOAN CALCULATOR)** — interactive, kira monthly payment guna flat rate Malaysia:
    - Input: Harga (auto isi bila klik varian), DP (10% default), Tempoh (5/7/9 tahun), Kadar faedah (default 3%)
    - Output: Bayaran bulanan, Jumlah faedah, Jumlah bayaran
    - Formula: (Harga - DP) × (Rate/100) × Tempoh = Total Interest. Monthly = (Total + Interest) / (Tempoh × 12)
@@ -1311,7 +1531,10 @@ ${MODELS.map(m=>`**${m.name}** - ${m.type} dari ${m.from}${m.variants.map(v=>`\n
 - WA button floating bottom-right: wa.me/${whatsapp}
 - Rebat badge: pill shape, background #f59e0b, color white, 🔥 prefix
 - Loan calculator: REAL working JavaScript, bukan dummy. Kira guna formula flat rate.
-- Semua content dalam Bahasa Malaysia yang natural`
+- Semua content dalam Bahasa Malaysia yang natural
+- **Gambar Model**: Guna URL yang diberikan di atas. Jangan guna URL lain.
+- **Gambar Pengguna (BASE64)**: Data URL gambar yang diberikan (profil, WhatsApp SS, serahan) — embed terus dalam tag <img src="...">. Jangan ubah atau simpan semula. Guna dalam Hero section (profil) dan Galeri (WhatsApp SS & serahan).
+- Jika gambar base64 terlalu besar untuk satu fail HTML, guna teknik lazy loading atau papar thumbnail sahaja untuk galeri.`
     : `You are a front-end developer. Generate ONE COMPLETE HTML FILE for a Perodua sales advisor website in English.
 
 **ALL CONTENT must be original — do not use templates, lorem ipsum, or fake placeholder text. Write real content like a real website.**
@@ -1326,7 +1549,9 @@ ${achievements ? `- Achievements: ${achievements}` : ''}
 ${philosophy ? `- Philosophy: ${philosophy}` : ''}
 ${showroom ? `- Showroom Address: ${showroom}` : ''}
 ${email ? `- Email: ${email}` : ''}
-${photoUrl ? `- Profile Photo URL: ${photoUrl} (use in hero and about sections)` : '- Profile Photo: If none, design without profile image. Use icon/avatar placeholder.'}
+${profileImgData ? `- Profile Photo (BASE64): ${profileImgData}` : '- Profile Photo: No photo uploaded. Use icon/avatar placeholder.'}
+${state.waImgs && state.waImgs.length ? '\n\nWHATSAPP TESTIMONIAL SCREENSHOTS ('+state.waImgs.length+' images) — Use these images in the website gallery as proof of customer satisfaction.\n'+state.waImgs.map((d,i)=>'WhatsApp image '+(i+1)+': '+d).join('\n') : ''}
+${state.deliveryImgs && state.deliveryImgs.length ? '\n\nCAR DELIVERY PHOTOS ('+state.deliveryImgs.length+' images) — Use these images in the gallery showing handover moments.\n'+state.deliveryImgs.map((d,i)=>'Delivery photo '+(i+1)+': '+d).join('\n') : ''}
 
 ## SERVICES
 ${servicesStr}
@@ -1363,8 +1588,10 @@ ${antiAI}
 This is the MOST IMPORTANT section:
 
 a) Model catalog with type badge (Compact Hatchback, SUV etc)
-b) Each variant shows price + rebate badge (yellow pill shape) if applicable
-c) **Loan Calculator** — interactive, flat rate Malaysia formula:
+b) Each model shows image (USE THESE URLs for model images):
+${MODELS.map(m=>`  - ${m.name}: ${m.img}`).join('\n')}
+c) Each variant shows price + rebate badge (yellow pill shape) if applicable
+d) **Loan Calculator** — interactive, flat rate Malaysia formula:
    - Input: Price (auto-fill on variant click), DP (10% default), Tenure (5/7/9 years), Interest rate (default 3%)
    - Output: Monthly payment, Total interest, Total payment
    - Formula: (Price - DP) × (Rate/100) × Tenure = Total Interest. Monthly = (Price - DP + Interest) / (Tenure × 12)
@@ -1396,7 +1623,10 @@ ${MODELS.map(m=>`**${m.name}** - ${m.type} from ${m.from}${m.variants.map(v=>`\n
 - WA floating button bottom-right: wa.me/${whatsapp}
 - Rebate badge: pill shape, background #f59e0b, white text, 🔥 prefix
 - Loan calculator: REAL working JavaScript, flat rate formula
-- Natural, human-sounding English throughout`;
+- Natural, human-sounding English throughout
+- **Model Images**: Use the Perodua official URLs provided above. Do not use other URLs.
+- **User Images (BASE64)**: Directly embed the provided base64 data URLs in <img src="..."> tags. Use in Hero section (profile) and Gallery (WhatsApp screenshots & delivery photos).
+- If base64 images make the file large, use lazy loading or thumbnail previews in the gallery.`;
 
   document.getElementById('promptOutput').textContent = prompt;
   document.getElementById('promptOutputWrap').style.display = '';
