@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Pembina Laman Web Penasihat Jualan Perodua</title>
+<style>
+:root {
+  --perodua-red: #ED1C24;
+  --perodua-red-dark: #C4161D;
+  --perodua-white: #FFFFFF;
+  --perodua-grey: #F5F5F5;
+  --perodua-dark: #333333;
+  --wa-green: #25D366;
+  --text: #1a1a1a;
+  --text-muted: #666;
+  --border: #e0e0e0;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --max-width: 800px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+  --transition: 0.3s ease;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;background:#f0f0f0;color:var(--text);line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* Header */
+.header{background:linear-gradient(135deg,var(--perodua-red),var(--perodua-red-dark));color:#fff;padding:16px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+.header-inner{max-width:var(--max-width);margin:0 auto;display:flex;align-items:center;gap:12px}
+.header-logo{width:40px;height:40px;flex-shrink:0}
+.header h1{font-size:1.05rem;font-weight:700;letter-spacing:-0.3px;line-height:1.2}
+.header .sub{font-size:0.75rem;opacity:0.85;font-weight:400;display:block}
+
+/* Progress */
+.progress-wrap{background:var(--perodua-white);padding:12px 20px;border-bottom:1px solid var(--border);position:sticky;top:66px;z-index:99}
+.progress-inner{max-width:var(--max-width);margin:0 auto}
+.progress-bar{display:flex;gap:4px;margin-bottom:6px}
+.progress-step{flex:1;height:4px;border-radius:2px;background:var(--border);transition:background var(--transition)}
+.progress-step.active{background:var(--perodua-red)}
+.progress-step.done{background:var(--wa-green)}
+.progress-label{display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted)}
+.progress-label span{font-weight:600;color:var(--perodua-red)}
+
+/* Container */
+.container{max-width:var(--max-width);margin:0 auto;padding:16px 16px 100px}
+
+/* Card */
+.card{background:var(--perodua-white);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:16px}
+.card-title{font-size:1.2rem;font-weight:700;margin-bottom:4px;color:var(--perodua-dark)}
+.card-subtitle{font-size:0.85rem;color:var(--text-muted);margin-bottom:16px}
+.step-number{display:inline-block;background:var(--perodua-red);color:#fff;font-size:0.7rem;font-weight:700;padding:2px 10px;border-radius:20px;margin-bottom:8px}
+
+/* Form */
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:0.88rem;font-weight:600;margin-bottom:4px;color:var(--perodua-dark)}
+.form-group .hint{font-size:0.75rem;color:var(--text-muted);margin-top:2px}
+input[type="text"],input[type="tel"],input[type="number"],input[type="url"],textarea,select{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.95rem;font-family:inherit;transition:border-color var(--transition);background:#fff;color:var(--text);-webkit-appearance:none;appearance:none}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--perodua-red);box-shadow:0 0 0 3px rgba(237,28,36,0.1)}
+textarea{resize:vertical;min-height:80px}
+
+/* Checkbox */
+.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:480px){.check-grid{grid-template-columns:1fr}}
+.check-item{display:flex;align-items:center;gap:10px;padding:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all var(--transition);user-select:none}
+.check-item:hover{border-color:var(--perodua-red)}
+.check-item.selected{border-color:var(--perodua-red);background:rgba(237,28,36,0.04)}
+.check-item input[type="checkbox"]{width:18px;height:18px;accent-color:var(--perodua-red);flex-shrink:0}
+.check-item .check-label{font-size:0.88rem;font-weight:500}
+
+/* Testimonial Cards */
+.testimonial-list{display:flex;flex-direction:column;gap:12px}
+.testimonial-card{background:var(--perodua-grey);border-radius:var(--radius-sm);padding:16px;position:relative}
+.testimonial-card .stars{color:#f59e0b;font-size:1rem;margin-bottom:4px}
+.testimonial-card .name{font-weight:600;font-size:0.9rem}
+.testimonial-card .date{font-size:0.75rem;color:var(--text-muted)}
+.testimonial-card .review{font-size:0.85rem;margin-top:4px;font-style:italic;color:#444}
+.testimonial-card .remove-btn{position:absolute;top:8px;right:8px;background:rgba(237,28,36,0.1);color:var(--perodua-red);border:none;width:28px;height:28px;border-radius:50%;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background var(--transition)}
+.testimonial-card .remove-btn:hover{background:var(--perodua-red);color:#fff}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border:none;border-radius:var(--radius-sm);font-size:0.95rem;font-weight:600;font-family:inherit;cursor:pointer;transition:all var(--transition);text-decoration:none;white-space:nowrap}
+.btn:active{transform:scale(0.97)}
+.btn-primary{background:var(--perodua-red);color:#fff}
+.btn-primary:hover{background:var(--perodua-red-dark)}
+.btn-secondary{background:var(--perodua-grey);color:var(--text)}
+.btn-secondary:hover{background:#e8e8e8}
+.btn-success{background:var(--wa-green);color:#fff}
+.btn-success:hover{background:#1da851}
+.btn-outline{background:transparent;border:1.5px solid var(--perodua-red);color:var(--perodua-red)}
+.btn-outline:hover{background:var(--perodua-red);color:#fff}
+.btn-block{width:100%}
+.btn-sm{padding:8px 16px;font-size:0.85rem}
+.btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+
+/* Nav */
+.nav-btns{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+.nav-btns .btn{flex:1;min-width:120px}
+
+/* Model Catalog */
+.model-section{margin-bottom:24px}
+.model-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:12px;border-bottom:2px solid var(--perodua-red)}
+.model-header h3{font-size:1.1rem;font-weight:700}
+.model-badge{background:var(--perodua-red);color:#fff;font-size:0.65rem;padding:2px 8px;border-radius:20px;font-weight:600}
+.model-price-from{font-size:0.82rem;color:var(--text-muted);margin-left:auto}
+.variant-list{display:flex;flex-direction:column;gap:6px}
+.variant-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--perodua-grey);border-radius:var(--radius-sm);cursor:pointer;transition:all var(--transition);border:1.5px solid transparent;font-size:0.88rem}
+.variant-item:hover,.variant-item.selected{border-color:var(--perodua-red);background:rgba(237,28,36,0.04)}
+.variant-item .vname{font-weight:500}
+.variant-item .vprice{font-weight:700;color:var(--perodua-red)}
+
+/* Loan Calculator */
+.loan-calc{background:var(--perodua-grey);border-radius:var(--radius);padding:20px;margin-top:16px}
+.loan-calc h4{font-size:1rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.loan-result{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px}
+@media(max-width:480px){.loan-result{grid-template-columns:1fr}}
+.loan-result-item{background:var(--perodua-white);border-radius:var(--radius-sm);padding:14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.loan-result-item .label{font-size:0.75rem;color:var(--text-muted);margin-bottom:4px}
+.loan-result-item .value{font-size:1.2rem;font-weight:700;color:var(--perodua-red)}
+.loan-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.loan-form-grid{grid-template-columns:1fr}}
+
+/* Gallery Suggestions */
+.gallery-suggest{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:480px){.gallery-suggest{grid-template-columns:1fr}}
+.gallery-item{background:var(--perodua-grey);border-radius:var(--radius-sm);padding:12px;font-size:0.85rem;cursor:pointer;transition:all var(--transition);border:1.5px solid transparent}
+.gallery-item:hover{border-color:var(--perodua-red)}
+.gallery-item.selected{background:rgba(237,28,36,0.06);border-color:var(--perodua-red)}
+.gallery-item .g-icon{font-size:1.5rem;margin-bottom:4px}
+.gallery-item .g-label{font-weight:500;line-height:1.3}
+
+/* Prompt Output */
+.prompt-output{background:#1e1e1e;color:#d4d4d4;border-radius:var(--radius-sm);padding:16px;font-family:'Cascadia Code','Fira Code','Consolas',monospace;font-size:0.8rem;line-height:1.5;white-space:pre-wrap;word-break:break-word;max-height:400px;overflow-y:auto;margin-top:12px}
+
+/* Deploy Steps */
+.deploy-step{display:flex;gap:14px;padding:16px;background:var(--perodua-grey);border-radius:var(--radius-sm);margin-bottom:12px}
+.deploy-num{width:32px;height:32px;background:var(--perodua-red);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;flex-shrink:0}
+.deploy-content{flex:1}
+.deploy-content h4{font-size:0.92rem;font-weight:600;margin-bottom:4px}
+.deploy-content p{font-size:0.85rem;color:#555;line-height:1.5}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--perodua-dark);color:#fff;padding:14px 24px;border-radius:var(--radius-sm);font-size:0.9rem;font-weight:500;z-index:999;opacity:0;transition:all 0.4s ease;pointer-events:none;max-width:90vw;text-align:center;box-shadow:var(--shadow-lg)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Restart btn */
+.restart-btn{position:fixed;bottom:80px;right:16px;z-index:90;width:48px;height:48px;border-radius:50%;background:var(--perodua-white);border:1.5px solid var(--border);box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.2rem;transition:all var(--transition)}
+.restart-btn:hover{box-shadow:var(--shadow-lg);border-color:var(--perodua-red)}
+
+/* Hide inactive steps */
+.step{display:none}
+.step.active{display:block}
+
+/* Photo placeholder */
+.photo-placeholder{width:100px;height:100px;border-radius:50%;background:var(--perodua-grey);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:var(--text-muted);margin-bottom:12px;overflow:hidden;position:relative}
+.photo-placeholder img{width:100%;height:100%;object-fit:cover}
+.photo-placeholder .camera-icon{opacity:0.5}
+
+/* Responsive */
+@media(max-width:480px){
+  .header h1{font-size:0.95rem}
+  .card{padding:18px}
+  .nav-btns{flex-direction:column}
+  .nav-btns .btn{min-width:auto;width:100%}
+  .restart-btn{bottom:16px;right:12px;width:44px;height:44px;font-size:1rem}
+}
+
+/* Print */
+@media print{
+  .header,.progress-wrap,.nav-btns,.restart-btn,.toast{display:none!important}
+  .step{display:block!important}
+  .card{break-inside:avoid;box-shadow:none;border:1px solid #ddd}
+}
+
+/* Custom input for services */
+.custom-service-input{margin-top:8px}
+.custom-service-input input{font-size:0.85rem;padding:10px 12px}
+
+/* Simple SVG icons inline */
+.icon{display:inline-block;width:20px;height:20px;vertical-align:middle;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon-sm{width:16px;height:16px}
+
+/* Empty state */
+.empty-state{text-align:center;padding:24px;color:var(--text-muted);font-size:0.9rem}
+
+/* Sync indicator */
+.save-indicator{font-size:0.7rem;color:var(--text-muted);text-align:right;padding:4px 0;margin-top:-8px;min-height:18px}
+.save-indicator.saved{color:var(--wa-green)}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-inner">
+    <svg class="header-logo" viewBox="0 0 40 40" fill="none">
+      <rect width="40" height="40" rx="8" fill="white"/>
+      <text x="20" y="28" font-size="22" font-weight="800" text-anchor="middle" fill="#ED1C24" font-family="Arial">P</text>
+    </svg>
+    <div>
+      <h1>Pembina Laman Web <span class="sub">Penasihat Jualan Perodua</span></h1>
+    </div>
+  </div>
+</header>
+
+<!-- Progress -->
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="progress-label"><span id="stepCounter">Langkah 1/9</span><span id="stepName">Maklumat Peribadi</span></div>
+  </div>
+</div>
+
+<!-- Container -->
+<div class="container" id="app">
+
+  <!-- STEP 1: Maklumat Peribadi -->
+  <div class="step active" data-step="1">
+    <div class="card">
+      <span class="step-number">Langkah 1</span>
+      <h2 class="card-title">Maklumat Peribadi</h2>
+      <p class="card-subtitle">Masukkan maklumat asas anda untuk laman web peribadi.</p>
+
+      <div class="form-group">
+        <label>Foto Profil</label>
+        <div class="photo-placeholder" id="photoPreview">
+          <span class="camera-icon">📷</span>
+        </div>
+        <input type="text" id="photoUrl" placeholder="URL gambar profil (contoh: https://example.com/foto.jpg)" class="form-input" data-save="photoUrl">
+        <div class="hint">Masukkan URL gambar atau biarkan kosong untuk menggunakan placeholder.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="fullName">Nama Penuh *</label>
+        <input type="text" id="fullName" placeholder="cth: Ahmad bin Ismail" data-save="fullName" required>
+      </div>
+
+      <div class="form-group" style="margin-bottom:0">
+        <label for="phone">Nombor Telefon *</label>
+        <input type="tel" id="phone" placeholder="cth: 0123456789" data-save="phone" required>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="form-group">
+        <label for="dealership">Nama Dealership / Cawangan *</label>
+        <input type="text" id="dealership" placeholder="cth: Perodua Sdn Bhd - KL Sentral" data-save="dealership" required>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label for="location">Lokasi (Bandar/Negeri) *</label>
+        <input type="text" id="location" placeholder="cth: Kuala Lumpur, Wilayah Persekutuan" data-save="location" required>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Tentang Saya -->
+  <div class="step" data-step="2">
+    <div class="card">
+      <span class="step-number">Langkah 2</span>
+      <h2 class="card-title">Tentang Saya</h2>
+      <p class="card-subtitle">Kongsi latar belakang dan pencapaian anda sebagai penasihat jualan.</p>
+
+      <div class="form-group">
+        <label for="experience">Pengalaman (tahun)</label>
+        <input type="number" id="experience" placeholder="cth: 5" min="0" max="50" data-save="experience">
+      </div>
+
+      <div class="form-group">
+        <label for="achievements">Pencapaian & Anugerah Jualan</label>
+        <textarea id="achievements" rows="3" placeholder="cth: Top Salesperson 2023, 2024&#10;Anugerah Jualan Tertinggi Perodua&#10;Best Customer Service Award" data-save="achievements"></textarea>
+      </div>
+
+      <div class="form-group" style="margin-bottom:0">
+        <label for="philosophy">Falsafah Perkhidmatan</label>
+        <textarea id="philosophy" rows="3" placeholder="Terangkan pendekatan anda dalam melayani pelanggan..." data-save="philosophy"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: Perkhidmatan -->
+  <div class="step" data-step="3">
+    <div class="card">
+      <span class="step-number">Langkah 3</span>
+      <h2 class="card-title">Perkhidmatan</h2>
+      <p class="card-subtitle">Pilih perkhidmatan yang anda tawarkan kepada pelanggan.</p>
+
+      <div class="check-grid" id="servicesGrid">
+        <label class="check-item" data-service="test-drive">
+          <input type="checkbox" data-save="svc_testDrive">
+          <span class="check-label">🚗 Tempahan Test Drive</span>
+        </label>
+        <label class="check-item" data-service="loan-consult">
+          <input type="checkbox" data-save="svc_loanConsult">
+          <span class="check-label">💰 Konsultasi Pinjaman</span>
+        </label>
+        <label class="check-item" data-service="trade-in">
+          <input type="checkbox" data-save="svc_tradeIn">
+          <span class="check-label">🔄 Trade-In Kereta Lama</span>
+        </label>
+        <label class="check-item" data-service="insurance">
+          <input type="checkbox" data-save="svc_insurance">
+          <span class="check-label">🛡️ Insurans Kereta</span>
+        </label>
+        <label class="check-item" data-service="jpj">
+          <input type="checkbox" data-save="svc_jpj">
+          <span class="check-label">📋 Pendaftaran JPJ</span>
+        </label>
+      </div>
+
+      <div class="form-group" style="margin-top:12px">
+        <label for="customServices">Perkhidmatan Tambahan</label>
+        <input type="text" id="customServices" placeholder="cth: Konsultasi EV, Perkhidmatan selepas jualan" data-save="customServices">
+        <div class="hint">Asingkan dengan koma jika lebih daripada satu.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: Testimoni -->
+  <div class="step" data-step="4">
+    <div class="card">
+      <span class="step-number">Langkah 4</span>
+      <h2 class="card-title">Testimoni Pelanggan</h2>
+      <p class="card-subtitle">Tambah testimoni daripada pelanggan anda. Maksimum 6 testimoni.</p>
+
+      <div id="testimonialList" class="testimonial-list"></div>
+
+      <div id="testimonialForm" style="margin-top:16px;padding:16px;background:var(--perodua-grey);border-radius:var(--radius-sm)">
+        <div class="form-group">
+          <label for="testiName">Nama Pelanggan</label>
+          <input type="text" id="testiName" placeholder="cth: Siti Nurhaliza">
+        </div>
+        <div class="form-group">
+          <label for="testiReview">Testimoni</label>
+          <textarea id="testiReview" rows="2" placeholder="Pengalaman pelanggan bersama anda..."></textarea>
+        </div>
+        <div class="form-group" style="display:flex;gap:12px;align-items:center">
+          <div style="flex:1">
+            <label for="testiRating">Bintang (1-5)</label>
+            <select id="testiRating"><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option></select>
+          </div>
+          <div style="flex:1">
+            <label for="testiDate">Tarikh</label>
+            <input type="date" id="testiDate">
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="addTestimonial()">+ Tambah Testimoni</button>
+      </div>
+
+      <div class="empty-state" id="testiEmpty">Belum ada testimoni. Tambah testimoni pelanggan anda.</div>
+    </div>
+  </div>
+
+  <!-- STEP 5: Hubungi Saya -->
+  <div class="step" data-step="5">
+    <div class="card">
+      <span class="step-number">Langkah 5</span>
+      <h2 class="card-title">Hubungi Saya</h2>
+      <p class="card-subtitle">Maklumat hubungan untuk pelanggan menghubungi anda.</p>
+
+      <div class="form-group">
+        <label for="whatsapp">Nombor WhatsApp (dipraisi dari Langkah 1)</label>
+        <input type="tel" id="whatsapp" placeholder="cth: 60123456789 (dengan kod negara)" data-save="whatsapp">
+        <div class="hint">Guna format antarabangsa tanpa +, cth: 60123456789</div>
+      </div>
+
+      <div class="form-group">
+        <label for="showroom">Alamat Showroom</label>
+        <textarea id="showroom" rows="3" placeholder="cth: No. 12, Jalan Tun Razak,&#10;50400 Kuala Lumpur" data-save="showroom"></textarea>
+      </div>
+
+      <div class="form-group" style="margin-bottom:0">
+        <label for="email">E-mel (pilihan)</label>
+        <input type="text" id="email" placeholder="cth: ahmad@perodua.com" data-save="email">
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6: Galeri -->
+  <div class="step" data-step="6">
+    <div class="card">
+      <span class="step-number">Langkah 6</span>
+      <h2 class="card-title">Galeri</h2>
+      <p class="card-subtitle">Pilih jenis gambar dan kandungan yang ingin dipaparkan di galeri laman web anda.</p>
+
+      <div class="gallery-suggest" id="galleryGrid">
+        <div class="gallery-item" data-gallery="car-front">
+          <div class="g-icon">🚗</div>
+          <div class="g-label">Gambar kereta dari depan</div>
+        </div>
+        <div class="gallery-item" data-gallery="car-side">
+          <div class="g-icon">🚙</div>
+          <div class="g-label">Gambar kereta sisi & belakang</div>
+        </div>
+        <div class="gallery-item" data-gallery="interior">
+          <div class="g-icon">🪑</div>
+          <div class="g-label">Gambar dalaman kereta</div>
+        </div>
+        <div class="gallery-item" data-gallery="with-customer">
+          <div class="g-icon">🤝</div>
+          <div class="g-label">Bersama pelanggan semasa serahan</div>
+        </div>
+        <div class="gallery-item" data-gallery="certificate">
+          <div class="g-icon">🏆</div>
+          <div class="g-label">Sijil / Anugerah jualan</div>
+        </div>
+        <div class="gallery-item" data-gallery="video">
+          <div class="g-icon">🎥</div>
+          <div class="g-label">Video testimoni pelanggan</div>
+        </div>
+        <div class="gallery-item" data-gallery="showroom">
+          <div class="g-icon">🏢</div>
+          <div class="g-label">Gambar showroom / cawangan</div>
+        </div>
+        <div class="gallery-item" data-gallery="team">
+          <div class="g-icon">👥</div>
+          <div class="g-label">Gambar bersama team jualan</div>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top:12px">
+        <label for="galleryNotes">Penerangan Tambahan untuk Galeri</label>
+        <textarea id="galleryNotes" rows="3" placeholder="Terangkan apa yang anda mahu paparkan di galeri..." data-save="galleryNotes"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 7: Senarai Model & Harga + Loan Calculator -->
+  <div class="step" data-step="7">
+    <div class="card">
+      <span class="step-number">Langkah 7</span>
+      <h2 class="card-title">Senarai Model & Harga</h2>
+      <p class="card-subtitle">Katalog lengkap model Perodua dengan semua varian dan harga terkini.</p>
+
+      <div id="modelCatalog"></div>
+
+      <!-- Loan Calculator -->
+      <div class="loan-calc" id="loanCalc">
+        <h4>🧮 Kiraan Pinjaman Kereta</h4>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:12px">Klik mana-mana varian di atas untuk praisi harga, atau masukkan manual.</p>
+
+        <div class="loan-form-grid">
+          <div class="form-group">
+            <label for="loanPrice">Harga Kereta (RM)</label>
+            <input type="number" id="loanPrice" placeholder="cth: 50000" min="0" step="100">
+          </div>
+          <div class="form-group">
+            <label for="loanDown">Bayaran Pendahuluan (RM)</label>
+            <input type="number" id="loanDown" placeholder="cth: 5000" min="0" step="100">
+          </div>
+          <div class="form-group">
+            <label for="loanTenure">Tempoh Pinjaman</label>
+            <select id="loanTenure">
+              <option value="5">5 Tahun</option>
+              <option value="7" selected>7 Tahun</option>
+              <option value="9">9 Tahun</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="loanRate">Kadar Faedah (%)</label>
+            <input type="number" id="loanRate" placeholder="3.0" min="0" max="20" step="0.1" value="3.0">
+          </div>
+        </div>
+
+        <div class="loan-result" id="loanResult">
+          <div class="loan-result-item">
+            <div class="label">Bayaran Bulanan</div>
+            <div class="value" id="loanMonthly">RM 0</div>
+          </div>
+          <div class="loan-result-item">
+            <div class="label">Jumlah Faedah</div>
+            <div class="value" id="loanInterest">RM 0</div>
+          </div>
+          <div class="loan-result-item">
+            <div class="label">Jumlah Bayaran</div>
+            <div class="value" id="loanTotal">RM 0</div>
+          </div>
+        </div>
+
+        <button class="btn btn-outline btn-sm" onclick="setDefaultDown()" style="margin-top:8px">🔽 Tetapkan DP 10%</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 8: Semak & Jana -->
+  <div class="step" data-step="8">
+    <div class="card">
+      <span class="step-number">Langkah 8</span>
+      <h2 class="card-title">Semak & Jana Prompt</h2>
+      <p class="card-subtitle">Semak maklumat anda dan jana prompt untuk diberikan kepada Claude.</p>
+
+      <div id="summaryContent"></div>
+
+      <div style="margin-top:16px">
+        <button class="btn btn-primary btn-block" onclick="generatePrompt()" style="margin-bottom:12px">⚡ Jana Prompt untuk Claude</button>
+
+        <div id="promptOutputWrap" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-weight:600;font-size:0.9rem">📋 Prompt Dihasilkan</span>
+            <button class="btn btn-success btn-sm" onclick="copyPrompt()">📋 Salin Prompt</button>
+          </div>
+          <div class="prompt-output" id="promptOutput"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 9: Panduan Deploy -->
+  <div class="step" data-step="9">
+    <div class="card">
+      <span class="step-number">Langkah 9</span>
+      <h2 class="card-title">Panduan Deploy</h2>
+      <p class="card-subtitle">Ikuti langkah-langkah ini untuk menerbitkan laman web anda secara percuma menggunakan Cloudflare Pages.</p>
+
+      <div class="deploy-step">
+        <div class="deploy-num">1</div>
+        <div class="deploy-content">
+          <h4>Dapatkan Prompt dan Hasilkan Laman</h4>
+          <p>Salin prompt yang dijana di Langkah 8 dan tampalkannya ke Claude (claude.ai). Claude akan menghasilkan satu fail <code>index.html</code> lengkap untuk laman web anda.</p>
+        </div>
+      </div>
+
+      <div class="deploy-step">
+        <div class="deploy-num">2</div>
+        <div class="deploy-content">
+          <h4>Simpan Fail index.html</h4>
+          <p>Selepas Claude menghasilkan kod, klik butang "Salin" dan tampal ke dalam editor teks (Notepad, VS Code). Simpan sebagai <code>index.html</code> di folder komputer anda.</p>
+        </div>
+      </div>
+
+      <div class="deploy-step">
+        <div class="deploy-num">3</div>
+        <div class="deploy-content">
+          <h4>Buka GitHub dan Login</h4>
+          <p>Buka <a href="https://github.com" target="_blank">github.com</a> dan login ke akaun GitHub anda. Jika tiada akaun, daftar percuma di <a href="https://github.com/signup" target="_blank">github.com/signup</a>.</p>
+        </div>
+      </div>
+
+      <div class="deploy-step">
+        <div class="deploy-num">4</div>
+        <div class="deploy-content">
+          <h4>Cipta Repositori Baru</h4>
+          <p>Klik butang "+" di sudut kanan atas → "New repository". Beri nama seperti <code>laman-perodua-saya</code>. Biarkan "Public". Klik "Create repository".</p>
+        </div>
+      </div>
+
+      <div class="deploy-step">
+        <div class="deploy-num">5</div>
+        <div class="deploy-content">
+          <h4>Upload Fail index.html</h4>
+          <p>Di repositori baru, klik "Add file" → "Upload files". Seret fail <code>index.html</code> anda ke dalam kotak. Klik "Commit changes".</p>
+        </div>
+      </div>
+
+      <div class="deploy-step">
+        <div class="deploy-num">6</div>
+        <div class="deploy-content">
+          <h4>Buka Cloudflare Pages</h4>
+          <p>Buka <a href="https://pages.cloudflare.com" target="_blank">pages.cloudflare.com</a> dan login (atau daftar percuma). Navigasi ke "Pages" dari menu sisi kiri.</p>
+        </div>
+      </div>
+
+      <div class="deploy-step">
+        <div class="deploy-num">7</div>
+        <div class="deploy-content">
+          <h4>Sambung ke GitHub</h4>
+          <p>Klik "Create a project" → "Connect to Git". Pilih GitHub dan authorize jika perlu. Cari repositori <code>laman-perodua-saya</code> yang anda buat tadi.</p>
+        </div>
+      </div>
+
+      <div class="deploy-step">
+        <div class="deploy-num">8</div>
+        <div class="deploy-content">
+          <h4>Konfigurasi & Deploy</h4>
+          <p>Dalam "Build settings", biarkan semua kosong (tiada framework). Klik "Save and Deploy". Cloudflare akan deploy laman web anda dalam beberapa minit.</p>
+        </div>
+      </div>
+
+      <div class="deploy-step">
+        <div class="deploy-num">9</div>
+        <div class="deploy-content">
+          <h4>Dapatkan URL Laman Web</h4>
+          <p>Selepas deploy selesai, anda akan dapat URL seperti <code>https://laman-perodua-saya.pages.dev</code>. Kongsi URL ini dengan pelanggan! Anda juga boleh tetapkan domain sendiri di tab "Custom domains".</p>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:20px;padding:16px;background:rgba(37,211,102,0.08);border-radius:var(--radius-sm)">
+        <p style="font-size:0.9rem;font-weight:600">🎉 Tahniah! Laman web peribadi anda kini sudah siap dan boleh dikongsi dengan pelanggan.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav-btns">
+    <button class="btn btn-secondary" id="prevBtn" onclick="prevStep()">← Sebelumnya</button>
+    <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Seterusnya →</button>
+  </div>
+</div>
+
+<!-- Restart Button -->
+<button class="restart-btn" onclick="restart()" title="Mulakan Semula">↺</button>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== CONSTANTS =====
+const STORAGE_KEY = 'perodua_website_builder';
+const TOTAL_STEPS = 9;
+
+// ===== MODEL DATA =====
+const MODELS = [
+  {name:'Axia',type:'Compact Hatchback',from:'RM22,000',variants:[
+    {name:'1.0L AV (D-CVT)',price:49500},
+    {name:'1.0L SE (D-CVT)',price:44000},
+    {name:'1.0L X (D-CVT)',price:40000},
+    {name:'1.0L G (D-CVT)',price:38600},
+    {name:'1.0L E (Manual)',price:22000}
+  ]},
+  {name:'Bezza',type:'Compact Sedan',from:'RM34,580',variants:[
+    {name:'1.3 AV (Automatic)',price:49980},
+    {name:'1.3 X (Automatic)',price:43980},
+    {name:'1.0 G (Automatic)',price:36580},
+    {name:'1.0 G (Manual)',price:34580}
+  ]},
+  {name:'Myvi',type:'Hatchback',from:'RM46,500',variants:[
+    {name:'1.5L AV (D-CVT)',price:59900},
+    {name:'1.5L H (D-CVT)',price:54900},
+    {name:'1.5L X (D-CVT)',price:50900},
+    {name:'1.3L G (D-CVT)',price:48500},
+    {name:'1.3L G (Without PSDA) (D-CVT)',price:46500}
+  ]},
+  {name:'Ativa',type:'SUV',from:'RM62,500',variants:[
+    {name:'1.0L TURBO AV (2-Tone Special Metallic Black Roof)',price:73400},
+    {name:'1.0L TURBO AV (Special Metallic)',price:73100},
+    {name:'1.0L TURBO AV (Metallic)',price:72600},
+    {name:'1.0L TURBO H (Special Metallic)',price:67800},
+    {name:'1.0L TURBO H (Metallic)',price:67300},
+    {name:'1.0L TURBO X (Metallic)',price:62500}
+  ]},
+  {name:'Alza',type:'MPV 7-Seater',from:'RM62,500',variants:[
+    {name:'1.5L AV (D-CVT)',price:75500},
+    {name:'1.5L H (D-CVT)',price:68000},
+    {name:'1.5L X (D-CVT)',price:62500}
+  ]},
+  {name:'Aruz',type:'SUV 7-Seater',from:'RM72,900',variants:[
+    {name:'1.5 AV (Automatic)',price:77900},
+    {name:'1.5 X (Automatic)',price:72900}
+  ]},
+  {name:'Traz',type:'SUV 5-Seater',from:'~RM68,000',variants:[
+    {name:'1.5L AV',price:78000},
+    {name:'1.5L X',price:72000}
+  ]}
+];
+
+// ===== STATE =====
+let state = {step:1,testimonials:[],gallerySelected:[]};
+let saveTimer = null;
+let initialized = false;
+
+// ===== INIT =====
+function init(){
+  loadState();
+  renderProgress();
+  renderModels();
+  renderTestimonials();
+  renderGallery();
+  updateNav();
+  updatePhoto();
+  populateFromStep1();
+  setupAutoSave();
+  setupCheckItems();
+  setupGalleryItems();
+  setupLoanCalc();
+  initialized = true;
+  showStep(state.step);
+}
+
+// ===== LOCAL STORAGE =====
+function loadState(){
+  try{
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if(saved){
+      const parsed = JSON.parse(saved);
+      state = {...state,...parsed};
+      // Restore form fields
+      document.querySelectorAll('[data-save]').forEach(el=>{
+        const key = el.dataset.save;
+        if(state[key]!==undefined) el.value = state[key];
+      });
+    }
+  }catch(e){console.warn('Load state error:',e)}
+}
+
+function saveState(){
+  try{
+    // Collect form values
+    document.querySelectorAll('[data-save]').forEach(el=>{
+      const key = el.dataset.save;
+      if(el.type==='checkbox') state[key] = el.checked;
+      else state[key] = el.value;
+    });
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+  }catch(e){console.warn('Save state error:',e)}
+}
+
+function debouncedSave(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveState,500);
+}
+
+function setupAutoSave(){
+  document.querySelectorAll('[data-save]').forEach(el=>{
+    el.addEventListener('input',debouncedSave);
+    el.addEventListener('change',debouncedSave);
+  });
+}
+
+// ===== STEP NAVIGATION =====
+function showStep(n){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.querySelector(`.step[data-step="${n}"]`).classList.add('active');
+  state.step = n;
+  renderProgress();
+  updateNav();
+  saveState();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function nextStep(){
+  if(state.step < TOTAL_STEPS){
+    // Validate step 1
+    if(state.step === 1){
+      const name = document.getElementById('fullName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const dealership = document.getElementById('dealership').value.trim();
+      const loc = document.getElementById('location').value.trim();
+      if(!name || !phone || !dealership || !loc){
+        showToast('⚠️ Sila isi semua ruangan wajib (Nama, Telefon, Dealership, Lokasi).');
+        return;
+      }
+    }
+    if(state.step === 8) generatePrompt();
+    showStep(state.step+1);
+  }
+}
+
+function prevStep(){
+  if(state.step > 1) showStep(state.step-1);
+}
+
+function renderProgress(){
+  const bar = document.getElementById('progressBar');
+  const label = document.getElementById('stepCounter');
+  const stepName = document.getElementById('stepName');
+  const names = ['','Maklumat Peribadi','Tentang Saya','Perkhidmatan','Testimoni','Hubungi Saya','Galeri','Model & Harga','Semak & Jana','Panduan Deploy'];
+  bar.innerHTML = '';
+  for(let i=1;i<=TOTAL_STEPS;i++){
+    const div = document.createElement('div');
+    div.className = 'progress-step';
+    if(i===state.step) div.classList.add('active');
+    else if(i<state.step) div.classList.add('done');
+    bar.appendChild(div);
+  }
+  label.textContent = `Langkah ${state.step}/${TOTAL_STEPS}`;
+  stepName.textContent = names[state.step]||'';
+}
+
+function updateNav(){
+  document.getElementById('prevBtn').style.display = state.step > 1 ? '' : 'none';
+  const nextBtn = document.getElementById('nextBtn');
+  if(state.step === TOTAL_STEPS){
+    nextBtn.style.display = 'none';
+  } else {
+    nextBtn.style.display = '';
+    nextBtn.textContent = state.step === 8 ? '⚡ Jana Prompt →' : 'Seterusnya →';
+  }
+}
+
+function restart(){
+  if(!confirm('Mulakan semula? Semua data akan dipadamkan.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  state = {step:1,testimonials:[],gallerySelected:[]};
+  document.querySelectorAll('[data-save]').forEach(el=>{
+    if(el.type==='checkbox') el.checked = false;
+    else el.value = '';
+  });
+  document.querySelectorAll('.check-item').forEach(el=>el.classList.remove('selected'));
+  document.querySelectorAll('.gallery-item').forEach(el=>el.classList.remove('selected'));
+  document.getElementById('testimonialList').innerHTML = '';
+  document.getElementById('testiEmpty').style.display = '';
+  showStep(1);
+  renderModels();
+  renderTestimonials();
+  updatePhoto();
+  populateFromStep1();
+  showToast('✅ Data telah diset semula.');
+}
+
+// ===== PHOTO =====
+function updatePhoto(){
+  const url = document.getElementById('photoUrl').value.trim();
+  const preview = document.getElementById('photoPreview');
+  if(url){
+    preview.innerHTML = `<img src="${url}" alt="Foto Profil" onerror="this.parentElement.innerHTML='<span class=\\'camera-icon\\'>📷</span>'">`;
+  } else {
+    preview.innerHTML = '<span class="camera-icon">📷</span>';
+  }
+}
+document.getElementById('photoUrl')?.addEventListener('input',()=>{updatePhoto();debouncedSave()});
+
+// ===== STEP 1 PREFILL =====
+function populateFromStep1(){
+  const phone = document.getElementById('phone').value;
+  const wa = document.getElementById('whatsapp');
+  if(phone && !wa.value) wa.value = phone.startsWith('0')?'6'+phone:phone;
+}
+
+// ===== STEP 3 CHECK ITEMS =====
+function setupCheckItems(){
+  document.querySelectorAll('.check-item').forEach(item=>{
+    const cb = item.querySelector('input[type="checkbox"]');
+    if(cb.checked) item.classList.add('selected');
+    cb.addEventListener('change',()=>{
+      item.classList.toggle('selected',cb.checked);
+      debouncedSave();
+    });
+  });
+}
+
+// ===== STEP 4 TESTIMONIALS =====
+function addTestimonial(){
+  const name = document.getElementById('testiName').value.trim();
+  const review = document.getElementById('testiReview').value.trim();
+  const rating = parseInt(document.getElementById('testiRating').value);
+  const date = document.getElementById('testiDate').value;
+  if(!name || !review){showToast('⚠️ Sila isi nama dan testimoni pelanggan.');return}
+  if(state.testimonials.length>=6){showToast('⚠️ Maksimum 6 testimoni sahaja.');return}
+  state.testimonials.push({name,review,rating,date:date||new Date().toISOString().split('T')[0]});
+  document.getElementById('testiName').value='';
+  document.getElementById('testiReview').value='';
+  document.getElementById('testiDate').value='';
+  renderTestimonials();
+  saveState();
+  showToast('✅ Testimoni ditambah!');
+}
+
+function removeTestimonial(i){
+  state.testimonials.splice(i,1);
+  renderTestimonials();
+  saveState();
+}
+
+function renderTestimonials(){
+  const list = document.getElementById('testimonialList');
+  const empty = document.getElementById('testiEmpty');
+  list.innerHTML = '';
+  if(state.testimonials.length===0){
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+  state.testimonials.forEach((t,i)=>{
+    const stars = '⭐'.repeat(t.rating);
+    const card = document.createElement('div');
+    card.className = 'testimonial-card';
+    card.innerHTML = `
+      <button class="remove-btn" onclick="removeTestimonial(${i})">✕</button>
+      <div class="stars">${stars}</div>
+      <div class="name">${escapeHtml(t.name)}</div>
+      <div class="date">${t.date}</div>
+      <div class="review">"${escapeHtml(t.review)}"</div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+// ===== STEP 6 GALLERY =====
+function setupGalleryItems(){
+  document.querySelectorAll('.gallery-item').forEach(item=>{
+    const key = item.dataset.gallery;
+    if(state.gallerySelected?.includes(key)) item.classList.add('selected');
+    item.addEventListener('click',()=>{
+      item.classList.toggle('selected');
+      updateGalleryState();
+      debouncedSave();
+    });
+  });
+}
+
+function updateGalleryState(){
+  state.gallerySelected = [];
+  document.querySelectorAll('.gallery-item.selected').forEach(el=>{
+    state.gallerySelected.push(el.dataset.gallery);
+  });
+}
+
+function renderGallery(){
+  document.querySelectorAll('.gallery-item').forEach(el=>{
+    if(state.gallerySelected?.includes(el.dataset.gallery)){
+      el.classList.add('selected');
+    }
+  });
+}
+
+// ===== STEP 7 MODELS =====
+function renderModels(){
+  const container = document.getElementById('modelCatalog');
+  container.innerHTML = '';
+  MODELS.forEach(m=>{
+    const section = document.createElement('div');
+    section.className = 'model-section';
+    const header = document.createElement('div');
+    header.className = 'model-header';
+    header.innerHTML = `
+      <h3>${m.name}</h3>
+      <span class="model-badge">${m.type}</span>
+      <span class="model-price-from">Dari ${m.from}</span>
+    `;
+    section.appendChild(header);
+    const list = document.createElement('div');
+    list.className = 'variant-list';
+    m.variants.forEach(v=>{
+      const item = document.createElement('div');
+      item.className = 'variant-item';
+      item.innerHTML = `<span class="vname">${v.name}</span><span class="vprice">RM ${v.price.toLocaleString()}</span>`;
+      item.addEventListener('click',()=>{
+        document.querySelectorAll('.variant-item').forEach(el=>el.classList.remove('selected'));
+        item.classList.add('selected');
+        document.getElementById('loanPrice').value = v.price;
+        calculateLoan();
+      });
+      list.appendChild(item);
+    });
+    section.appendChild(list);
+    container.appendChild(section);
+  });
+}
+
+// ===== LOAN CALCULATOR =====
+function setupLoanCalc(){
+  ['loanPrice','loanDown','loanTenure','loanRate'].forEach(id=>{
+    document.getElementById(id).addEventListener('input',calculateLoan);
+    document.getElementById(id).addEventListener('change',calculateLoan);
+  });
+  calculateLoan();
+}
+
+function calculateLoan(){
+  const price = parseFloat(document.getElementById('loanPrice').value)||0;
+  const down = parseFloat(document.getElementById('loanDown').value)||0;
+  const tenure = parseInt(document.getElementById('loanTenure').value)||7;
+  const rate = parseFloat(document.getElementById('loanRate').value)||3;
+  const loanAmount = price - down;
+  if(loanAmount <= 0){
+    document.getElementById('loanMonthly').textContent = 'RM 0';
+    document.getElementById('loanInterest').textContent = 'RM 0';
+    document.getElementById('loanTotal').textContent = 'RM 0';
+    return;
+  }
+  // Malaysian flat rate
+  const totalInterest = (loanAmount * rate / 100) * tenure;
+  const totalPayment = loanAmount + totalInterest;
+  const monthly = totalPayment / (tenure * 12);
+  document.getElementById('loanMonthly').textContent = 'RM '+monthly.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  document.getElementById('loanInterest').textContent = 'RM '+totalInterest.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  document.getElementById('loanTotal').textContent = 'RM '+totalPayment.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+}
+
+function setDefaultDown(){
+  const price = parseFloat(document.getElementById('loanPrice').value)||0;
+  if(price>0){
+    document.getElementById('loanDown').value = Math.round(price * 0.1);
+    calculateLoan();
+    showToast('✅ DP 10%: RM '+Math.round(price*0.1).toLocaleString());
+  } else {
+    showToast('⚠️ Sila masukkan harga kereta dahulu.');
+  }
+}
+
+// ===== STEP 8 SUMMARY & PROMPT =====
+function buildSummary(){
+  const name = document.getElementById('fullName').value||'[Nama]';
+  const phone = document.getElementById('phone').value||'[No Telefon]';
+  const dealership = document.getElementById('dealership').value||'[Dealership]';
+  const loc = document.getElementById('location').value||'[Lokasi]';
+  const exp = document.getElementById('experience').value||'[Pengalaman]';
+  const achievements = document.getElementById('achievements').value||'[Tiada]';
+  const philosophy = document.getElementById('philosophy').value||'[Tiada]';
+  const services = [];
+  document.querySelectorAll('#servicesGrid input[type="checkbox"]:checked').forEach(cb=>{
+    const label = cb.closest('.check-item')?.querySelector('.check-label')?.textContent||cb.id;
+    services.push(label);
+  });
+  const customSvc = document.getElementById('customServices').value;
+  if(customSvc) customSvc.split(',').map(s=>s.trim()).filter(s=>s).forEach(s=>services.push(s));
+  const whatsapp = document.getElementById('whatsapp').value||phone;
+  const showroom = document.getElementById('showroom').value||'[Alamat]';
+  const email = document.getElementById('email').value||'';
+  const galleryItems = [];
+  document.querySelectorAll('.gallery-item.selected').forEach(el=>{
+    galleryItems.push(el.querySelector('.g-label').textContent);
+  });
+  const galleryNotes = document.getElementById('galleryNotes').value||'';
+
+  let html = `
+    <div style="background:var(--perodua-grey);padding:16px;border-radius:var(--radius-sm);margin-bottom:12px">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px;color:var(--perodua-red)">👤 Maklumat Peribadi</h3>
+      <p style="font-size:0.88rem"><strong>Nama:</strong> ${escapeHtml(name)}</p>
+      <p style="font-size:0.88rem"><strong>Telefon:</strong> ${escapeHtml(phone)}</p>
+      <p style="font-size:0.88rem"><strong>Dealership:</strong> ${escapeHtml(dealership)}</p>
+      <p style="font-size:0.88rem"><strong>Lokasi:</strong> ${escapeHtml(loc)}</p>
+    </div>
+    <div style="background:var(--perodua-grey);padding:16px;border-radius:var(--radius-sm);margin-bottom:12px">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px;color:var(--perodua-red)">📝 Tentang Saya</h3>
+      <p style="font-size:0.88rem"><strong>Pengalaman:</strong> ${escapeHtml(exp)} tahun</p>
+      <p style="font-size:0.88rem"><strong>Pencapaian:</strong><br>${escapeHtml(achievements).replace(/\n/g,'<br>')}</p>
+      <p style="font-size:0.88rem"><strong>Falsafah:</strong> ${escapeHtml(philosophy).replace(/\n/g,'<br>')}</p>
+    </div>
+  `;
+  if(services.length){
+    html += `<div style="background:var(--perodua-grey);padding:16px;border-radius:var(--radius-sm);margin-bottom:12px">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px;color:var(--perodua-red)">🛠️ Perkhidmatan</h3>
+      <ul style="font-size:0.88rem;padding-left:20px">${services.map(s=>`<li>${escapeHtml(s)}</li>`).join('')}</ul>
+    </div>`;
+  }
+  if(state.testimonials.length){
+    html += `<div style="background:var(--perodua-grey);padding:16px;border-radius:var(--radius-sm);margin-bottom:12px">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px;color:var(--perodua-red)">⭐ Testimoni (${state.testimonials.length})</h3>
+      ${state.testimonials.map(t=>`<p style="font-size:0.85rem;margin-bottom:4px">${'⭐'.repeat(t.rating)} <strong>${escapeHtml(t.name)}</strong> - "${escapeHtml(t.review)}"</p>`).join('')}
+    </div>`;
+  }
+  html += `<div style="background:var(--perodua-grey);padding:16px;border-radius:var(--radius-sm);margin-bottom:12px">
+    <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px;color:var(--perodua-red)">📞 Hubungi</h3>
+    <p style="font-size:0.88rem"><strong>WhatsApp:</strong> ${escapeHtml(whatsapp)}</p>
+    <p style="font-size:0.88rem"><strong>Showroom:</strong><br>${escapeHtml(showroom).replace(/\n/g,'<br>')}</p>
+    ${email?`<p style="font-size:0.88rem"><strong>E-mel:</strong> ${escapeHtml(email)}</p>`:''}
+  </div>`;
+  if(galleryItems.length||galleryNotes){
+    html += `<div style="background:var(--perodua-grey);padding:16px;border-radius:var(--radius-sm);margin-bottom:12px">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:8px;color:var(--perodua-red)">🖼️ Galeri</h3>
+      ${galleryItems.length?`<ul style="font-size:0.88rem;padding-left:20px">${galleryItems.map(g=>`<li>${escapeHtml(g)}</li>`).join('')}</ul>`:''}
+      ${galleryNotes?`<p style="font-size:0.85rem;margin-top:4px">📝 ${escapeHtml(galleryNotes)}</p>`:''}
+    </div>`;
+  }
+  return html;
+}
+
+function generatePrompt(){
+  const name = document.getElementById('fullName').value||'[Nama]';
+  const phone = document.getElementById('phone').value||'[No Telefon]';
+  const dealership = document.getElementById('dealership').value||'[Dealership]';
+  const loc = document.getElementById('location').value||'[Lokasi]';
+  const photoUrl = document.getElementById('photoUrl').value||'';
+  const exp = document.getElementById('experience').value||'[Pengalaman]';
+  const achievements = document.getElementById('achievements').value||'';
+  const philosophy = document.getElementById('philosophy').value||'';
+  const services = [];
+  document.querySelectorAll('#servicesGrid input[type="checkbox"]:checked').forEach(cb=>{
+    const label = cb.closest('.check-item')?.querySelector('.check-label')?.textContent||cb.id;
+    services.push(label);
+  });
+  const customSvc = document.getElementById('customServices').value;
+  if(customSvc) customSvc.split(',').map(s=>s.trim()).filter(s=>s).forEach(s=>services.push(s));
+  const whatsapp = document.getElementById('whatsapp').value||phone;
+  const showroom = document.getElementById('showroom').value||'';
+  const email = document.getElementById('email').value||'';
+  const galleryItems = [];
+  document.querySelectorAll('.gallery-item.selected').forEach(el=>{
+    galleryItems.push(el.querySelector('.g-label').textContent);
+  });
+  const galleryNotes = document.getElementById('galleryNotes').value||'';
+
+  const testimoniStr = state.testimonials.length ? state.testimonials.map(t=>
+    `- ${'⭐'.repeat(t.rating)} **${t.name}** (${t.date}): "${t.review}"`
+  ).join('\n') : '- Tiada testimoni lagi.';
+
+  const servicesStr = services.length ? services.map(s=>`- ${s}`).join('\n') : '- Tiada perkhidmatan dipilih.';
+
+  const galleryStr = galleryItems.length ? galleryItems.map(g=>`- ${g}`).join('\n') : '';
+  const galleryStr2 = galleryNotes ? `\n\nPenerangan tambahan: ${galleryNotes}` : '';
+
+  const prompt = `Anda adalah pakar pembangun laman web (front-end developer). Hasilkan satu laman web penasihat jualan Perodua dalam satu fail HTML (index.html) dengan CSS dan JavaScript inline.
+
+## MAKLUMAT PENASIHAT JUALAN
+- Nama: ${name}
+- No Telefon: ${phone}
+- Dealership: ${dealership}
+- Lokasi: ${loc}
+${photoUrl ? `- URL Foto Profil: ${photoUrl}` : '- Foto Profil: Gunakan placeholder/avatar'}
+- Pengalaman: ${exp} tahun
+- Pencapaian: ${achievements || 'Tiada'}
+- Falsafah Perkhidmatan: ${philosophy || 'Tiada'}
+- WhatsApp: ${whatsapp}
+- Alamat Showroom: ${showroom || 'Tiada'}
+${email ? `- E-mel: ${email}` : ''}
+
+## PERKHIDMATAN DITAWARKAN
+${servicesStr}
+
+## TESTIMONI PELANGGAN
+${testimoniStr}
+
+## GALERI
+${galleryStr}${galleryStr2}
+
+## KEPERLUAN REKA BENTUK & FUNGSI
+1. Bahasa: **Bahasa Malaysia (Melayu)** sepenuhnya
+2. Mobile-first responsive (70% pengguna guna telefon)
+3. Tema warna Perodua: merah (#ED1C24), putih (#FFFFFF), kelabu (#F5F5F5)
+4. Gunakan sistem font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
+5. Butang WhatsApp terapung di bawah kanan dengan pautan wa.me/${whatsapp}
+6. Footer: Nama penasihat + "Penasihat Jualan Perodua"
+7. Reka bentuk moden, bersih, profesional - sesuai untuk industri automotif
+8. Gunakan ikon emoji (tiada Font Awesome / dependency luaran)
+9. Input nombor telefon guna format antarabangsa (60...)
+
+## STRUKTUR LAMAN WEB (sekurang-kurangnya)
+- Hero section dengan gambar/placeholder dan nama penasihat
+- Tentang Saya section
+- Perkhidmatan section
+- Senarai Model Perodua dengan harga (gunakan data di bawah)
+- Testimoni section (jika ada)
+- Hubungi Saya section dengan alamat dan butang WhatsApp
+- Galeri section
+- Footer
+
+## DATA MODEL PERODUA (sertakan dalam laman)
+**Perodua Axia** - Compact Hatchback dari RM22,000
+- 1.0L AV (D-CVT) RM49,500
+- 1.0L SE (D-CVT) RM44,000
+- 1.0L X (D-CVT) RM40,000
+- 1.0L G (D-CVT) RM38,600
+- 1.0L E (Manual) RM22,000
+
+**Perodua Bezza** - Compact Sedan dari RM34,580
+- 1.3 AV (Automatic) RM49,980
+- 1.3 X (Automatic) RM43,980
+- 1.0 G (Automatic) RM36,580
+- 1.0 G (Manual) RM34,580
+
+**Perodua Myvi** - Hatchback dari RM46,500
+- 1.5L AV (D-CVT) RM59,900
+- 1.5L H (D-CVT) RM54,900
+- 1.5L X (D-CVT) RM50,900
+- 1.3L G (D-CVT) RM48,500
+- 1.3L G (Without PSDA) (D-CVT) RM46,500
+
+**Perodua Ativa** - SUV dari RM62,500
+- 1.0L TURBO AV (2-Tone Special Metallic Black Roof) RM73,400
+- 1.0L TURBO AV (Special Metallic) RM73,100
+- 1.0L TURBO AV (Metallic) RM72,600
+- 1.0L TURBO H (Special Metallic) RM67,800
+- 1.0L TURBO H (Metallic) RM67,300
+- 1.0L TURBO X (Metallic) RM62,500
+
+**Perodua Alza** - MPV 7-Seater dari RM62,500
+- 1.5L AV (D-CVT) RM75,500
+- 1.5L H (D-CVT) RM68,000
+- 1.5L X (D-CVT) RM62,500
+
+**Perodua Aruz** - SUV 7-Seater dari RM72,900
+- 1.5 AV (Automatic) RM77,900
+- 1.5 X (Automatic) RM72,900
+
+**Perodua Traz** - SUV 5-Seater dari ~RM68,000
+- 1.5L AV RM78,000
+- 1.5L X RM72,000
+
+## OUTPUT
+HASILKAN SATU FAIL HTML LENGKAP (index.html) dengan CSS dan JavaScript inline. Pastikan:
+- Semua kod dalam satu fail
+- Tiada dependency luar
+- Berfungsi sepenuhnya apabila dibuka di browser
+- Mobile-first responsive`;
+
+  document.getElementById('promptOutput').textContent = prompt;
+  document.getElementById('promptOutputWrap').style.display = '';
+  document.getElementById('summaryContent').innerHTML = buildSummary();
+  showToast('✅ Prompt berjaya dihasilkan!');
+}
+
+function copyPrompt(){
+  const text = document.getElementById('promptOutput').textContent;
+  // Try modern clipboard API first
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>{
+      showToast('📋 Prompt disalin ke clipboard!');
+    }).catch(()=>{
+      fallbackCopy(text);
+    });
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try{
+    document.execCommand('copy');
+    showToast('📋 Prompt disalin ke clipboard!');
+  }catch(e){
+    showToast('⚠️ Gagal menyalin. Sila salin manual.');
+  }
+  document.body.removeChild(ta);
+}
+
+// ===== TOAST =====
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(()=>toast.classList.remove('show'),3000);
+}
+
+// ===== HELPERS =====
+function escapeHtml(str){
+  if(!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ===== START =====
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
