@@ -104,6 +104,8 @@ textarea{resize:vertical;min-height:80px}
 .model-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:12px;border-bottom:2px solid var(--perodua-red)}
 .model-header h3{font-size:1.1rem;font-weight:700}
 .model-badge{background:var(--perodua-red);color:#fff;font-size:0.65rem;padding:2px 8px;border-radius:20px;font-weight:600}
+.rebat-badge{background:#f59e0b;color:#fff;font-size:0.6rem;padding:1px 6px;border-radius:20px;font-weight:700;margin-left:6px;display:inline-block;white-space:nowrap}
+.rebat-pill{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:0.65rem;padding:3px 8px;border-radius:20px;font-weight:700;display:inline-block;white-space:nowrap;letter-spacing:0.3px}
 .model-price-from{font-size:0.82rem;color:var(--text-muted);margin-left:auto}
 .variant-list{display:flex;flex-direction:column;gap:6px}
 .variant-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--perodua-grey);border-radius:var(--radius-sm);cursor:pointer;transition:all var(--transition);border:1.5px solid transparent;font-size:0.88rem}
@@ -480,6 +482,28 @@ textarea{resize:vertical;min-height:80px}
 
         <button class="btn btn-outline btn-sm" onclick="setDefaultDown()" style="margin-top:8px">🔽 Tetapkan DP 10%</button>
       </div>
+
+      <!-- Rebat & Promosi -->
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+        <h4 style="font-size:1rem;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px">🔥 Rebat & Promosi</h4>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:12px">Masukkan rebat untuk mana-mana varian. Klik varian di atas, then masukkan jumlah rebat. Akan dipaparkan sebagai badge.</p>
+        <div class="form-group">
+          <label for="rebatVariant">Varian Dipilih</label>
+          <input type="text" id="rebatVariantName" readonly style="background:var(--perodua-grey);font-weight:600" placeholder="Klik varian di atas...">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group">
+            <label for="rebatAmount">Rebat (RM)</label>
+            <input type="number" id="rebatAmount" min="0" step="100" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label for="rebatLabel">Label (optional)</label>
+            <input type="text" id="rebatLabel" placeholder="cth: Promosi Hari Raya">
+          </div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="applyRebat()" style="width:100%">✅ Set Rebat untuk Varian Ini</button>
+        <div id="rebatStatus" style="font-size:0.8rem;color:var(--text-muted);margin-top:8px"></div>
+      </div>
     </div>
   </div>
 
@@ -489,6 +513,14 @@ textarea{resize:vertical;min-height:80px}
       <span class="step-number">Langkah 8</span>
       <h2 class="card-title">Semak & Jana Prompt</h2>
       <p class="card-subtitle">Semak maklumat anda dan jana prompt untuk diberikan kepada Claude.</p>
+
+      <div style="margin-bottom:16px;padding:14px;background:var(--perodua-grey);border-radius:var(--radius-sm)">
+        <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:6px">🌐 Bahasa Prompt / Language</label>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-sm lang-btn" data-lang="ms" onclick="setLang('ms')" style="flex:1;background:var(--perodua-red);color:#fff">🇲🇾 Bahasa Malaysia</button>
+          <button class="btn btn-sm lang-btn" data-lang="en" onclick="setLang('en')" style="flex:1;background:var(--perodua-grey);color:var(--text)">🇬🇧 English</button>
+        </div>
+      </div>
 
       <div id="summaryContent"></div>
 
@@ -611,46 +643,46 @@ const TOTAL_STEPS = 9;
 
 // ===== MODEL DATA =====
 const MODELS = [
-  {name:'Axia',type:'Compact Hatchback',from:'RM22,000',variants:[
-    {name:'1.0L AV (D-CVT)',price:49500},
-    {name:'1.0L SE (D-CVT)',price:44000},
-    {name:'1.0L X (D-CVT)',price:40000},
-    {name:'1.0L G (D-CVT)',price:38600},
-    {name:'1.0L E (Manual)',price:22000}
+  {name:'Axia',type:'Compact Hatchback',from:'RM22,000',img:'axia-2023.png',variants:[
+    {name:'1.0L AV (D-CVT)',price:49500,rebat:0},
+    {name:'1.0L SE (D-CVT)',price:44000,rebat:0},
+    {name:'1.0L X (D-CVT)',price:40000,rebat:0},
+    {name:'1.0L G (D-CVT)',price:38600,rebat:0},
+    {name:'1.0L E (Manual)',price:22000,rebat:0}
   ]},
-  {name:'Bezza',type:'Compact Sedan',from:'RM34,580',variants:[
-    {name:'1.3 AV (Automatic)',price:49980},
-    {name:'1.3 X (Automatic)',price:43980},
-    {name:'1.0 G (Automatic)',price:36580},
-    {name:'1.0 G (Manual)',price:34580}
+  {name:'Bezza',type:'Compact Sedan',from:'RM34,580',img:'bezza-2023.png',variants:[
+    {name:'1.3 AV (Automatic)',price:49980,rebat:0},
+    {name:'1.3 X (Automatic)',price:43980,rebat:0},
+    {name:'1.0 G (Automatic)',price:36580,rebat:0},
+    {name:'1.0 G (Manual)',price:34580,rebat:0}
   ]},
-  {name:'Myvi',type:'Hatchback',from:'RM46,500',variants:[
-    {name:'1.5L AV (D-CVT)',price:59900},
-    {name:'1.5L H (D-CVT)',price:54900},
-    {name:'1.5L X (D-CVT)',price:50900},
-    {name:'1.3L G (D-CVT)',price:48500},
-    {name:'1.3L G (Without PSDA) (D-CVT)',price:46500}
+  {name:'Myvi',type:'Hatchback',from:'RM46,500',img:'myvi-2023.png',variants:[
+    {name:'1.5L AV (D-CVT)',price:59900,rebat:0},
+    {name:'1.5L H (D-CVT)',price:54900,rebat:0},
+    {name:'1.5L X (D-CVT)',price:50900,rebat:0},
+    {name:'1.3L G (D-CVT)',price:48500,rebat:0},
+    {name:'1.3L G (Without PSDA) (D-CVT)',price:46500,rebat:0}
   ]},
-  {name:'Ativa',type:'SUV',from:'RM62,500',variants:[
-    {name:'1.0L TURBO AV (2-Tone Special Metallic Black Roof)',price:73400},
-    {name:'1.0L TURBO AV (Special Metallic)',price:73100},
-    {name:'1.0L TURBO AV (Metallic)',price:72600},
-    {name:'1.0L TURBO H (Special Metallic)',price:67800},
-    {name:'1.0L TURBO H (Metallic)',price:67300},
-    {name:'1.0L TURBO X (Metallic)',price:62500}
+  {name:'Ativa',type:'SUV',from:'RM62,500',img:'ativa-2023.png',variants:[
+    {name:'1.0L TURBO AV (2-Tone Special Metallic Black Roof)',price:73400,rebat:0},
+    {name:'1.0L TURBO AV (Special Metallic)',price:73100,rebat:0},
+    {name:'1.0L TURBO AV (Metallic)',price:72600,rebat:0},
+    {name:'1.0L TURBO H (Special Metallic)',price:67800,rebat:0},
+    {name:'1.0L TURBO H (Metallic)',price:67300,rebat:0},
+    {name:'1.0L TURBO X (Metallic)',price:62500,rebat:0}
   ]},
-  {name:'Alza',type:'MPV 7-Seater',from:'RM62,500',variants:[
-    {name:'1.5L AV (D-CVT)',price:75500},
-    {name:'1.5L H (D-CVT)',price:68000},
-    {name:'1.5L X (D-CVT)',price:62500}
+  {name:'Alza',type:'MPV 7-Seater',from:'RM62,500',img:'alza-2023.png',variants:[
+    {name:'1.5L AV (D-CVT)',price:75500,rebat:0},
+    {name:'1.5L H (D-CVT)',price:68000,rebat:0},
+    {name:'1.5L X (D-CVT)',price:62500,rebat:0}
   ]},
-  {name:'Aruz',type:'SUV 7-Seater',from:'RM72,900',variants:[
-    {name:'1.5 AV (Automatic)',price:77900},
-    {name:'1.5 X (Automatic)',price:72900}
+  {name:'Aruz',type:'SUV 7-Seater',from:'RM72,900',img:'aruz-2023.png',variants:[
+    {name:'1.5 AV (Automatic)',price:77900,rebat:0},
+    {name:'1.5 X (Automatic)',price:72900,rebat:0}
   ]},
-  {name:'Traz',type:'SUV 5-Seater',from:'~RM68,000',variants:[
-    {name:'1.5L AV',price:78000},
-    {name:'1.5L X',price:72000}
+  {name:'Traz',type:'SUV 5-Seater',from:'~RM68,000',img:'traz-2023.png',variants:[
+    {name:'1.5L AV',price:78000,rebat:0},
+    {name:'1.5L X',price:72000,rebat:0}
   ]}
 ];
 
@@ -689,6 +721,18 @@ function loadState(){
         const key = el.dataset.save;
         if(state[key]!==undefined) el.value = state[key];
       });
+      // Restore rebats
+      if(parsed.rebats){
+        parsed.rebats.forEach(mr=>{
+          const model = MODELS.find(m=>m.name===mr.name);
+          if(model) mr.variants.forEach(vr=>{
+            const v = model.variants.find(v=>v.name===vr.name);
+            if(v){v.rebat=vr.rebat; v.rebatLabel=vr.rebatLabel;}
+          });
+        });
+      }
+      // Restore language
+      if(parsed.promptLang) setLang(parsed.promptLang);
     }
   }catch(e){console.warn('Load state error:',e)}
 }
@@ -701,6 +745,9 @@ function saveState(){
       if(el.type==='checkbox') state[key] = el.checked;
       else state[key] = el.value;
     });
+    // Save rebat data
+    state.rebats = MODELS.map(m=>({name:m.name,variants:m.variants.map(v=>({name:v.name,rebat:v.rebat||0,rebatLabel:v.rebatLabel||''}))}));
+    state.promptLang = promptLang;
     localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
   }catch(e){console.warn('Save state error:',e)}
 }
@@ -924,12 +971,19 @@ function renderModels(){
     m.variants.forEach(v=>{
       const item = document.createElement('div');
       item.className = 'variant-item';
-      item.innerHTML = `<span class="vname">${v.name}</span><span class="vprice">RM ${v.price.toLocaleString()}</span>`;
+      item.innerHTML = `<span class="vname">${v.name}</span><span>${v.rebat ? `<span class="rebat-badge">🔥 Rebat RM${v.rebat.toLocaleString()}</span>` : ''}<span class="vprice">RM ${v.price.toLocaleString()}</span></span>`;
       item.addEventListener('click',()=>{
         document.querySelectorAll('.variant-item').forEach(el=>el.classList.remove('selected'));
         item.classList.add('selected');
         document.getElementById('loanPrice').value = v.price;
         calculateLoan();
+        // Show rebat form for this variant
+        document.getElementById('rebatVariantName').value = m.name + ' ' + v.name;
+        document.getElementById('rebatVariantName').dataset.modelIdx = MODELS.indexOf(m);
+        document.getElementById('rebatVariantName').dataset.varIdx = m.variants.indexOf(v);
+        document.getElementById('rebatAmount').value = v.rebat || '';
+        document.getElementById('rebatAmount').focus();
+        updateRebatStatus();
       });
       list.appendChild(item);
     });
@@ -977,6 +1031,34 @@ function setDefaultDown(){
   } else {
     showToast('⚠️ Sila masukkan harga kereta dahulu.');
   }
+}
+
+// ===== REBAT =====
+function applyRebat(){
+  const modelIdx = parseInt(document.getElementById('rebatVariantName').dataset.modelIdx);
+  const varIdx = parseInt(document.getElementById('rebatVariantName').dataset.varIdx);
+  const amount = parseInt(document.getElementById('rebatAmount').value)||0;
+  const label = document.getElementById('rebatLabel').value.trim();
+  if(isNaN(modelIdx)||isNaN(varIdx)){
+    showToast('⚠️ Sila klik varian kereta dahulu.');
+    return;
+  }
+  const v = MODELS[modelIdx].variants[varIdx];
+  v.rebat = amount;
+  v.rebatLabel = label;
+  // Re-render models to show updated badge
+  renderModels();
+  // Re-select this variant
+  document.querySelectorAll('.variant-item')[MODELS.slice(0,modelIdx).reduce((s,m)=>s+m.variants.length,0)+varIdx]?.classList.add('selected');
+  updateRebatStatus();
+  showToast(amount>0 ? `✅ Rebat RM${amount.toLocaleString()} untuk ${MODELS[modelIdx].name} ${v.name}` : '✅ Rebat dialihkan');
+  saveState();
+}
+
+function updateRebatStatus(){
+  const totalRebat = MODELS.reduce((s,m)=>s+m.variants.reduce((s2,v)=>s2+(v.rebat||0),0),0);
+  const count = MODELS.reduce((s,m)=>s+m.variants.filter(v=>v.rebat>0).length,0);
+  document.getElementById('rebatStatus').textContent = count>0 ? `✅ ${count} varian ada rebat. Jumlah rebat: RM${totalRebat.toLocaleString()}` : 'Tiada rebat ditetapkan.';
 }
 
 // ===== STEP 8 SUMMARY & PROMPT =====
@@ -1047,7 +1129,20 @@ function buildSummary(){
   return html;
 }
 
+// ===== LANGUAGE SELECTOR =====
+let promptLang = 'ms';
+
+function setLang(lang){
+  promptLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b=>{
+    b.style.background = b.dataset.lang===lang ? 'var(--perodua-red)' : 'var(--perodua-grey)';
+    b.style.color = b.dataset.lang===lang ? '#fff' : 'var(--text)';
+  });
+  showToast(lang==='ms' ? '🇲🇾 Bahasa Malaysia dipilih' : '🇬🇧 English selected');
+}
+
 function generatePrompt(){
+  const isBM = promptLang === 'ms';
   const name = document.getElementById('fullName').value||'[Nama]';
   const phone = document.getElementById('phone').value||'[No Telefon]';
   const dealership = document.getElementById('dealership').value||'[Dealership]';
@@ -1074,111 +1169,250 @@ function generatePrompt(){
 
   const testimoniStr = state.testimonials.length ? state.testimonials.map(t=>
     `- ${'⭐'.repeat(t.rating)} **${t.name}** (${t.date}): "${t.review}"`
-  ).join('\n') : '- Tiada testimoni lagi.';
+  ).join('\n') : (isBM ? '- Tiada testimoni lagi.' : '- No testimonials yet.');
 
-  const servicesStr = services.length ? services.map(s=>`- ${s}`).join('\n') : '- Tiada perkhidmatan dipilih.';
+  const servicesStr = services.length ? services.map(s=>`- ${s}`).join('\n') : (isBM ? '- Tiada perkhidmatan dipilih.' : '- No services selected.');
 
   const galleryStr = galleryItems.length ? galleryItems.map(g=>`- ${g}`).join('\n') : '';
-  const galleryStr2 = galleryNotes ? `\n\nPenerangan tambahan: ${galleryNotes}` : '';
+  const galleryStr2 = galleryNotes ? `\n\n${isBM ? 'Penerangan tambahan' : 'Additional notes'}: ${galleryNotes}` : '';
 
-  const prompt = `Anda adalah pakar pembangun laman web (front-end developer). Hasilkan satu laman web penasihat jualan Perodua dalam satu fail HTML (index.html) dengan CSS dan JavaScript inline.
+  // Collect rebat info
+  const rebatModels = MODELS.filter(m=>m.variants.some(v=>v.rebat>0));
+  const rebatStr = rebatModels.length ? rebatModels.map(m=>{
+    const rebatVariants = m.variants.filter(v=>v.rebat>0);
+    return rebatVariants.map(v=>`- ${m.name} ${v.name}: Rebat RM${v.rebat.toLocaleString()}${v.rebatLabel ? ` (${v.rebatLabel})` : ''}`).join('\n');
+  }).join('\n') : (isBM ? '- Tiada rebat/promosi.' : '- No rebates/promotions.');
 
-## MAKLUMAT PENASIHAT JUALAN
+  const langInstruction = isBM
+    ? '**Bahasa Malaysia (Melayu) sepenuhnya** — gunakan bahasa pasar yang natural, mesra, dan tak formal sangat. Macam cakap dengan kawan.'
+    : '**English** — use conversational, natural English. Friendly but professional, like talking to a friend who needs a car.';
+
+  const antiAI = isBM
+    ? `## COPYWRITING & ANTI-AI HUMANIZER (PENTING!)
+GAYA PENULISAN: JANGAN guna bahasa AI/robotik. Tulis macam manusia sebenar.
+- Guna ayat pendek, natural, ada jiwa. Buang semua frasa klise AI macam:
+  ❌ "Di era digital ini..." ❌ "Tidak dapat dinafikan bahawa..." ❌ "Sebagai kesimpulannya..."
+  ❌ "Dengan sukacitanya kami..." ❌ "Merupakan satu platform yang..."
+- Ganti dengan ayat ringkas, conversational:
+  ✅ "Nak kereta baru? Jom saya bantu." ✅ "Ada apa-apa hal, WhatsApp je."
+  ✅ "Test dulu baru beli — janji hati puas." ✅ "Boleh商量, saya bagi yang terbaik."
+- Emoji: guna sparingly. Satu-dua je dalam satu section. Jangan spam.
+- Jangan guna template greetings. Buang "Assalamualaikum dan salam sejahtera". Cukup "Hai" atau "Hey".
+- Setiap perenggan maksimum 2-3 ayat. Orang baca kat telefon, pendek-pendek.
+- Nada: mesra, yakin, macam salesman Perodua yang dah lama dalam industri - tahu benda, tak mengampu.
+- Testimoni tulis balik dalam ayat biasa, jangan edit jadi bunyi marketing. Biar macam orang cakap betul-betul.
+
+FORMAT WEBSITE:
+- Jangan guna card dengan shadow tebal sangat. Minimal, flat design.
+- Jangan guna gradient untuk background content. Putih atau kelabu muda je.
+- Font size untuk mobile: jangan kecik sangat. Minimum 16px untuk body text.`
+    : `## COPYWRITING & ANTI-AI HUMANIZER (IMPORTANT!)
+WRITING STYLE: DO NOT use AI/robotic language. Write like a real human.
+- Use short, natural sentences with personality. Remove all AI cliché phrases:
+  ❌ "In today's digital era..." ❌ "It is undeniable that..." ❌ "In conclusion..."
+  ❌ "We are pleased to..." ❌ "It serves as a platform for..."
+- Replace with short, conversational lines:
+  ✅ "Looking for a new car? Let me help." ✅ "Got questions? Just WhatsApp me."
+  ✅ "Test drive first — no pressure." ✅ "I'll get you the best deal."
+- Emoji: use sparingly. One or two per section max. Don't spam.
+- No template greetings. Skip "Dear valued customer". Just "Hi" or "Hey there".
+- Max 2-3 sentences per paragraph. People read on phones — keep it short.
+- Tone: friendly, confident, like an experienced Perodua sales advisor who knows their stuff.
+- Rewrite testimonials in natural language, don't make them sound like marketing copy.
+
+DESIGN FORMAT:
+- No heavy card shadows. Keep it minimal, flat design.
+- No gradients for content backgrounds. White or light grey only.
+- Mobile font size: minimum 16px for body text.`;
+
+  const prompt = isBM
+    ? `Anda adalah pakar front-end developer. Hasilkan SATU FAIL HTML LENGKAP untuk laman web penasihat jualan Perodua dalam Bahasa Malaysia.
+
+**SEMUA KANDUNGAN mesti original — jangan guna template, jangan guna lorem ipsum, jangan guna placeholder text tipu-tipu. Tulis betul-betul macam website sebenar.**
+
+## DATA PENASIHAT
 - Nama: ${name}
-- No Telefon: ${phone}
+- No Telefon / WhatsApp: ${whatsapp}
 - Dealership: ${dealership}
 - Lokasi: ${loc}
-${photoUrl ? `- URL Foto Profil: ${photoUrl}` : '- Foto Profil: Gunakan placeholder/avatar'}
 - Pengalaman: ${exp} tahun
-- Pencapaian: ${achievements || 'Tiada'}
-- Falsafah Perkhidmatan: ${philosophy || 'Tiada'}
-- WhatsApp: ${whatsapp}
-- Alamat Showroom: ${showroom || 'Tiada'}
+${achievements ? `- Pencapaian: ${achievements}` : ''}
+${philosophy ? `- Falsafah: ${philosophy}` : ''}
+${showroom ? `- Alamat Showroom: ${showroom}` : ''}
 ${email ? `- E-mel: ${email}` : ''}
+${photoUrl ? `- URL Foto Profil: ${photoUrl} (guna untuk hero section dan about section)` : '- Foto Profil: Jika tiada, design tanpa gambar profil. Guna icon/avatar placeholder.'}
 
-## PERKHIDMATAN DITAWARKAN
+## PERKHIDMATAN
 ${servicesStr}
 
-## TESTIMONI PELANGGAN
+## TESTIMONI
 ${testimoniStr}
 
 ## GALERI
 ${galleryStr}${galleryStr2}
 
-## KEPERLUAN REKA BENTUK & FUNGSI
-1. Bahasa: **Bahasa Malaysia (Melayu)** sepenuhnya
-2. Mobile-first responsive (70% pengguna guna telefon)
-3. Tema warna Perodua: merah (#ED1C24), putih (#FFFFFF), kelabu (#F5F5F5)
-4. Gunakan sistem font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif
-5. Butang WhatsApp terapung di bawah kanan dengan pautan wa.me/${whatsapp}
-6. Footer: Nama penasihat + "Penasihat Jualan Perodua"
-7. Reka bentuk moden, bersih, profesional - sesuai untuk industri automotif
-8. Gunakan ikon emoji (tiada Font Awesome / dependency luaran)
-9. Input nombor telefon guna format antarabangsa (60...)
+## REBAT & PROMOSI
+${rebatStr}
 
-## STRUKTUR LAMAN WEB (sekurang-kurangnya)
-- Hero section dengan gambar/placeholder dan nama penasihat
-- Tentang Saya section
-- Perkhidmatan section
-- Senarai Model Perodua dengan harga (gunakan data di bawah)
-- Testimoni section (jika ada)
-- Hubungi Saya section dengan alamat dan butang WhatsApp
-- Galeri section
-- Footer
+${antiAI}
 
-## DATA MODEL PERODUA (sertakan dalam laman)
-**Perodua Axia** - Compact Hatchback dari RM22,000
-- 1.0L AV (D-CVT) RM49,500
-- 1.0L SE (D-CVT) RM44,000
-- 1.0L X (D-CVT) RM40,000
-- 1.0L G (D-CVT) RM38,600
-- 1.0L E (Manual) RM22,000
+## LAMAN WEB MESTI ADA
 
-**Perodua Bezza** - Compact Sedan dari RM34,580
-- 1.3 AV (Automatic) RM49,980
-- 1.3 X (Automatic) RM43,980
-- 1.0 G (Automatic) RM36,580
-- 1.0 G (Manual) RM34,580
+### 1. HERO
+- Nama penasihat besar, tagline "Penasihat Jualan Perodua"
+- Kalau ada foto profil, papar. Kalau takde, design minimal tanpa gambar.
+- Butang "WhatsApp Saya" dan "Lihat Model"
+- Background: warna merah Perodua (#ED1C24) dengan elemen putih simple.
 
-**Perodua Myvi** - Hatchback dari RM46,500
-- 1.5L AV (D-CVT) RM59,900
-- 1.5L H (D-CVT) RM54,900
-- 1.5L X (D-CVT) RM50,900
-- 1.3L G (D-CVT) RM48,500
-- 1.3L G (Without PSDA) (D-CVT) RM46,500
+### 2. TENTANG SAYA
+- Cerita pasal pengalaman dan falsafah dalam ayat natural (bukan AI)
+- "Hai, saya [nama]. Dah ${exp} tahun dalam industri Perodua..."
+- 3 perkara best pasal diri dia dalam bentuk badge/icon (cth: ✅ Berpengalaman ✅ Mesra ✅ Boleh Runding)
 
-**Perodua Ativa** - SUV dari RM62,500
-- 1.0L TURBO AV (2-Tone Special Metallic Black Roof) RM73,400
-- 1.0L TURBO AV (Special Metallic) RM73,100
-- 1.0L TURBO AV (Metallic) RM72,600
-- 1.0L TURBO H (Special Metallic) RM67,800
-- 1.0L TURBO H (Metallic) RM67,300
-- 1.0L TURBO X (Metallic) RM62,500
+### 3. PERKHIDMATAN
+- List perkhidmatan dalam card simple
+- Icon emoji setiap satu
+- Butang WhatsApp untuk tanya lebih lanjut
 
-**Perodua Alza** - MPV 7-Seater dari RM62,500
-- 1.5L AV (D-CVT) RM75,500
-- 1.5L H (D-CVT) RM68,000
-- 1.5L X (D-CVT) RM62,500
+### 4. MODEL PERODUA — dengan HARGA, REBAT & LOAN CALCULATOR
+Ini section PALING PENTING. Kena ada:
 
-**Perodua Aruz** - SUV 7-Seater dari RM72,900
-- 1.5 AV (Automatic) RM77,900
-- 1.5 X (Automatic) RM72,900
+a) Catalog model dengan badge jenis (Compact Hatchback, SUV dll)
+b) Setiap varian tunjuk harga + rebat badge (pill shape kuning) jika ada
+c) **Kalkulator Pinjaman (LOAN CALCULATOR)** — interactive, kira monthly payment guna flat rate Malaysia:
+   - Input: Harga (auto isi bila klik varian), DP (10% default), Tempoh (5/7/9 tahun), Kadar faedah (default 3%)
+   - Output: Bayaran bulanan, Jumlah faedah, Jumlah bayaran
+   - Formula: (Harga - DP) × (Rate/100) × Tempoh = Total Interest. Monthly = (Total + Interest) / (Tempoh × 12)
+   - Tunjuk dalam grid 3 column: Monthly | Interest | Total
 
-**Perodua Traz** - SUV 5-Seater dari ~RM68,000
-- 1.5L AV RM78,000
-- 1.5L X RM72,000
+d) Rebat badge: Kuning (#f59e0b) pill shape dengan 🔥 icon sebelum setiap varian yang ada rebat
 
-## OUTPUT
-HASILKAN SATU FAIL HTML LENGKAP (index.html) dengan CSS dan JavaScript inline. Pastikan:
-- Semua kod dalam satu fail
-- Tiada dependency luar
-- Berfungsi sepenuhnya apabila dibuka di browser
-- Mobile-first responsive`;
+DATA MODEL (sertakan SEMUA):
+${MODELS.map(m=>`**${m.name}** - ${m.type} dari ${m.from}${m.variants.map(v=>`\n- ${v.name} ${v.rebat>0 ? '🔥 Rebat RM'+v.rebat.toLocaleString() : ''} — RM${v.price.toLocaleString()}`).join('')}`).join('\n\n')}
+
+### 5. TESTIMONI
+- Rating bintang dan nama pelanggan
+- Tulis dalam gaya original, jangan polish jadi bunyi marketing
+
+### 6. HUBUNGI
+- Nama, WhatsApp (button direct ke wa.me/${whatsapp}), alamat showroom
+- Design minimal: icon + text, no Google Maps
+
+### 7. FOOTER
+- Nama penasihat + "Penasihat Jualan Perodua"
+- Tahun semasa
+
+## TECHNICAL SPECS
+- Satu fail HTML index.html dengan CSS dan JS inline
+- Mobile-first responsive (media queries)
+- NO external dependencies — no Font Awesome, no CDN, no Google Fonts
+- Gunakan ikon emoji untuk semua icon
+- Tema Perodua: merah (#ED1C24), putih, kelabu (#F5F5F5)
+- WA button floating bottom-right: wa.me/${whatsapp}
+- Rebat badge: pill shape, background #f59e0b, color white, 🔥 prefix
+- Loan calculator: REAL working JavaScript, bukan dummy. Kira guna formula flat rate.
+- Semua content dalam Bahasa Malaysia yang natural`
+    : `You are a front-end developer. Generate ONE COMPLETE HTML FILE for a Perodua sales advisor website in English.
+
+**ALL CONTENT must be original — do not use templates, lorem ipsum, or fake placeholder text. Write real content like a real website.**
+
+## ADVISOR DATA
+- Name: ${name}
+- Phone / WhatsApp: ${whatsapp}
+- Dealership: ${dealership}
+- Location: ${loc}
+- Experience: ${exp} years
+${achievements ? `- Achievements: ${achievements}` : ''}
+${philosophy ? `- Philosophy: ${philosophy}` : ''}
+${showroom ? `- Showroom Address: ${showroom}` : ''}
+${email ? `- Email: ${email}` : ''}
+${photoUrl ? `- Profile Photo URL: ${photoUrl} (use in hero and about sections)` : '- Profile Photo: If none, design without profile image. Use icon/avatar placeholder.'}
+
+## SERVICES
+${servicesStr}
+
+## TESTIMONIALS
+${testimoniStr}
+
+## GALLERY
+${galleryStr}${galleryStr2}
+
+## REBATES & PROMOTIONS
+${rebatStr}
+
+${antiAI}
+
+## WEBSITE MUST INCLUDE
+
+### 1. HERO
+- Advisor name prominent, tagline "Perodua Sales Advisor"
+- If photo available, show it. If not, minimal design without image.
+- Buttons: "WhatsApp Me" and "View Models"
+- Background: Perodua red (#ED1C24) with simple white elements.
+
+### 2. ABOUT ME
+- Story about experience and philosophy in natural language (not AI)
+- "Hi, I'm [name]. Been in the Perodua industry for ${exp} years..."
+- 3 best things in badge/icon format (✅ Experienced ✅ Friendly ✅ Negotiable)
+
+### 3. SERVICES
+- Services in simple cards with emoji icons
+- WhatsApp button for inquiries
+
+### 4. PERODUA MODELS — with PRICES, REBATES & LOAN CALCULATOR
+This is the MOST IMPORTANT section:
+
+a) Model catalog with type badge (Compact Hatchback, SUV etc)
+b) Each variant shows price + rebate badge (yellow pill shape) if applicable
+c) **Loan Calculator** — interactive, flat rate Malaysia formula:
+   - Input: Price (auto-fill on variant click), DP (10% default), Tenure (5/7/9 years), Interest rate (default 3%)
+   - Output: Monthly payment, Total interest, Total payment
+   - Formula: (Price - DP) × (Rate/100) × Tenure = Total Interest. Monthly = (Price - DP + Interest) / (Tenure × 12)
+   - 3 column grid: Monthly | Interest | Total
+
+d) Rebate badge: Yellow (#f59e0b) pill shape with 🔥 icon
+
+MODEL DATA (include ALL):
+${MODELS.map(m=>`**${m.name}** - ${m.type} from ${m.from}${m.variants.map(v=>`\n- ${v.name} ${v.rebat>0 ? '🔥 Rebate RM'+v.rebat.toLocaleString() : ''} — RM${v.price.toLocaleString()}`).join('')}`).join('\n\n')}
+
+### 5. TESTIMONIALS
+- Star rating and customer name
+- Keep original style, don't over-polish
+
+### 6. CONTACT
+- Name, WhatsApp (direct button to wa.me/${whatsapp}), showroom address
+- Minimal: icon + text, no Google Maps
+
+### 7. FOOTER
+- Advisor name + "Perodua Sales Advisor"
+- Current year
+
+## TECHNICAL SPECS
+- Single index.html file with inline CSS and JS
+- Mobile-first responsive
+- NO external dependencies — no Font Awesome, no CDN, no Google Fonts
+- Use emoji for all icons
+- Perodua theme: red (#ED1C24), white, grey (#F5F5F5)
+- WA floating button bottom-right: wa.me/${whatsapp}
+- Rebate badge: pill shape, background #f59e0b, white text, 🔥 prefix
+- Loan calculator: REAL working JavaScript, flat rate formula
+- Natural, human-sounding English throughout`;
 
   document.getElementById('promptOutput').textContent = prompt;
   document.getElementById('promptOutputWrap').style.display = '';
   document.getElementById('summaryContent').innerHTML = buildSummary();
-  showToast('✅ Prompt berjaya dihasilkan!');
+  // Add rebat info to summary
+  const rebatTotal = MODELS.reduce((s,m)=>s+m.variants.reduce((s2,v)=>s2+(v.rebat||0),0),0);
+  const rebatCount = MODELS.reduce((s,m)=>s+m.variants.filter(v=>v.rebat>0).length,0);
+  const summaryRebat = document.createElement('div');
+  summaryRebat.style.cssText = 'background:var(--perodua-grey);padding:16px;border-radius:var(--radius-sm);margin-top:12px';
+  if(rebatCount>0){
+    summaryRebat.innerHTML = `<h3 style="font-size:1rem;font-weight:700;margin-bottom:8px;color:#f59e0b">🔥 Rebat & Promosi</h3><p style="font-size:0.88rem">${rebatCount} varian ada rebat. Jumlah rebat: RM${rebatTotal.toLocaleString()}</p>`;
+  } else {
+    summaryRebat.innerHTML = `<h3 style="font-size:1rem;font-weight:700;margin-bottom:8px;color:var(--text-muted)">🔥 Rebat</h3><p style="font-size:0.88rem;color:var(--text-muted)">Tiada rebat ditetapkan.</p>`;
+  }
+  document.getElementById('summaryContent').appendChild(summaryRebat);
+  showToast(isBM ? '✅ Prompt berjaya dihasilkan!' : '✅ Prompt generated!');
 }
 
 function copyPrompt(){
